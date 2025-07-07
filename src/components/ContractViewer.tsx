@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Edit, GitCompare, Download, MessageCircle, AlertTriangle, CheckCircle, Eye, X } from "lucide-react";
@@ -88,108 +87,115 @@ const ContractViewer = () => {
   };
 
   return (
-    <div className="h-full flex">
+    <div className="h-full flex flex-col">
       {/* Main Contract Content */}
-      <div className={`flex-1 flex flex-col transition-all duration-300 ${editingClause ? 'mr-96' : ''}`}>
-        {/* Toolbar */}
-        <div className="flex items-center justify-between p-4 border-b border-purple-900/30 bg-black/20 backdrop-blur-sm">
-          <div className="flex items-center space-x-2">
-            <h2 className="font-semibold text-white">Service Agreement - ABC Corp & XYZ Services</h2>
-            <span className="text-sm text-purple-300">• Draft v2.1</span>
-            {editingClause && (
-              <span className="text-sm text-purple-400 bg-purple-900/30 px-2 py-1 rounded">
-                • Editing Mode
-              </span>
-            )}
+      <div className={`flex-1 flex transition-all duration-300 ${editingClause ? 'mr-96' : ''}`}>
+        <div className="flex-1 flex flex-col">
+          {/* Toolbar */}
+          <div className="flex items-center justify-between p-4 border-b border-purple-900/30 bg-black/20 backdrop-blur-sm">
+            <div className="flex items-center space-x-2">
+              <h2 className="font-semibold text-white">Service Agreement - ABC Corp & XYZ Services</h2>
+              <span className="text-sm text-purple-300">• Draft v2.1</span>
+              {editingClause && (
+                <span className="text-sm text-purple-400 bg-purple-900/30 px-2 py-1 rounded">
+                  • Editing Mode
+                </span>
+              )}
+            </div>
+            <div className="flex items-center space-x-2">
+              <Button variant="outline" size="sm" className="border-purple-600/50 text-purple-300 hover:bg-purple-600/20">
+                <GitCompare className="w-4 h-4 mr-2" />
+                Compare to Template
+              </Button>
+              <Button variant="outline" size="sm" className="border-purple-600/50 text-purple-300 hover:bg-purple-600/20">
+                <Download className="w-4 h-4 mr-2" />
+                Export Summary
+              </Button>
+            </div>
           </div>
-          <div className="flex items-center space-x-2">
-            <Button variant="outline" size="sm" className="border-purple-600/50 text-purple-300 hover:bg-purple-600/20">
-              <GitCompare className="w-4 h-4 mr-2" />
-              Compare to Template
-            </Button>
-            <Button variant="outline" size="sm" className="border-purple-600/50 text-purple-300 hover:bg-purple-600/20">
-              <Download className="w-4 h-4 mr-2" />
-              Export Summary
-            </Button>
-          </div>
-        </div>
 
-        {/* Contract Content */}
-        <div className="flex-1 overflow-y-auto">
-          <div className="p-6">
-            <div className="max-w-4xl mx-auto space-y-6">
-              <div className="text-center mb-8">
-                <h1 className="text-3xl font-bold text-white mb-2">SOFTWARE DEVELOPMENT SERVICES AGREEMENT</h1>
-                <p className="text-purple-300">Effective Date: January 15, 2024</p>
-              </div>
+          {/* Contract Content */}
+          <div className="flex-1 overflow-y-auto">
+            <div className="p-6">
+              <div className="max-w-4xl mx-auto space-y-6">
+                <div className="text-center mb-8">
+                  <h1 className="text-3xl font-bold text-white mb-2">SOFTWARE DEVELOPMENT SERVICES AGREEMENT</h1>
+                  <p className="text-purple-300">Effective Date: January 15, 2024</p>
+                </div>
 
-              {contractSections.map((section) => (
-                <div 
-                  key={section.id} 
-                  className="relative group"
-                  onMouseEnter={() => setHoveredSection(section.id)}
-                  onMouseLeave={() => setHoveredSection(null)}
-                >
-                  <div className={`p-4 rounded-lg shadow-lg backdrop-blur-sm transition-all duration-200 ${getRiskColor(section.risk, editingClause === section.id)} ${
-                    hoveredSection === section.id && !editingClause ? 'shadow-xl scale-[1.01]' : 'shadow-md'
-                  }`}>
-                    <div className="flex items-start justify-between mb-3">
-                      <h3 className="font-semibold text-white flex items-center">
-                        {getRiskIcon(section.risk)}
-                        <span className="ml-2">{section.title}</span>
-                      </h3>
-                      <div className="flex items-center space-x-2">
-                        {/* Edit Button - Shows on hover or when editing */}
-                        {(hoveredSection === section.id || editingClause === section.id) && (
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            onClick={() => editingClause === section.id ? handleCloseEditor() : handleEditClause(section.id)}
-                            className={`${editingClause === section.id ? 'text-purple-300 bg-purple-600/30' : 'text-purple-400 hover:text-white hover:bg-purple-600/30'}`}
-                          >
-                            {editingClause === section.id ? <X className="w-4 h-4" /> : <Edit className="w-4 h-4" />}
-                          </Button>
-                        )}
-                        
-                        {section.hasComment && (
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            onClick={() => setActiveComment(activeComment === section.id ? null : section.id)}
-                            className="text-purple-400 hover:text-white hover:bg-purple-600/30"
-                          >
-                            <MessageCircle className="w-4 h-4" />
-                          </Button>
-                        )}
-                        
-                        {hoveredSection === section.id && !editingClause && (
-                          <div className="flex items-center space-x-1">
-                            <Eye className="w-3 h-3 text-purple-400" />
-                            <span className="text-xs text-purple-400">AI Analysis Available</span>
-                          </div>
-                        )}
-                      </div>
-                    </div>
-                    <p className="text-gray-200 leading-relaxed">{section.content}</p>
-                  </div>
-
-                  {/* Comment Bubble */}
-                  {section.hasComment && activeComment === section.id && !editingClause && (
-                    <div className="mt-3 p-4 bg-gradient-to-r from-purple-900/80 to-purple-800/80 border border-purple-500/30 rounded-lg backdrop-blur-sm shadow-lg shadow-purple-500/20">
-                      <div className="flex items-start space-x-2">
-                        <div className="w-2 h-2 bg-purple-400 rounded-full mt-2 flex-shrink-0 animate-pulse"></div>
-                        <div>
-                          <p className="text-sm font-medium text-purple-200 mb-1">🤖 AI Analysis</p>
-                          <p className="text-sm text-purple-100">{section.comment}</p>
+                {contractSections.map((section) => (
+                  <div 
+                    key={section.id} 
+                    className="relative group"
+                    onMouseEnter={() => setHoveredSection(section.id)}
+                    onMouseLeave={() => setHoveredSection(null)}
+                  >
+                    <div className={`p-4 rounded-lg shadow-lg backdrop-blur-sm transition-all duration-200 ${getRiskColor(section.risk, editingClause === section.id)} ${
+                      hoveredSection === section.id && !editingClause ? 'shadow-xl scale-[1.01]' : 'shadow-md'
+                    }`}>
+                      <div className="flex items-start justify-between mb-3">
+                        <h3 className="font-semibold text-white flex items-center">
+                          {getRiskIcon(section.risk)}
+                          <span className="ml-2">{section.title}</span>
+                        </h3>
+                        <div className="flex items-center space-x-2">
+                          {/* Edit Button - Shows on hover or when editing */}
+                          {(hoveredSection === section.id || editingClause === section.id) && (
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              onClick={() => editingClause === section.id ? handleCloseEditor() : handleEditClause(section.id)}
+                              className={`${editingClause === section.id ? 'text-purple-300 bg-purple-600/30' : 'text-purple-400 hover:text-white hover:bg-purple-600/30'}`}
+                            >
+                              {editingClause === section.id ? <X className="w-4 h-4" /> : <Edit className="w-4 h-4" />}
+                            </Button>
+                          )}
+                          
+                          {section.hasComment && (
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              onClick={() => setActiveComment(activeComment === section.id ? null : section.id)}
+                              className="text-purple-400 hover:text-white hover:bg-purple-600/30"
+                            >
+                              <MessageCircle className="w-4 h-4" />
+                            </Button>
+                          )}
+                          
+                          {hoveredSection === section.id && !editingClause && (
+                            <div className="flex items-center space-x-1">
+                              <Eye className="w-3 h-3 text-purple-400" />
+                              <span className="text-xs text-purple-400">AI Analysis Available</span>
+                            </div>
+                          )}
                         </div>
                       </div>
+                      <p className="text-gray-200 leading-relaxed">{section.content}</p>
                     </div>
-                  )}
-                </div>
-              ))}
+
+                    {/* Comment Bubble */}
+                    {section.hasComment && activeComment === section.id && !editingClause && (
+                      <div className="mt-3 p-4 bg-gradient-to-r from-purple-900/80 to-purple-800/80 border border-purple-500/30 rounded-lg backdrop-blur-sm shadow-lg shadow-purple-500/20">
+                        <div className="flex items-start space-x-2">
+                          <div className="w-2 h-2 bg-purple-400 rounded-full mt-2 flex-shrink-0 animate-pulse"></div>
+                          <div>
+                            <p className="text-sm font-medium text-purple-200 mb-1">🤖 AI Analysis</p>
+                            <p className="text-sm text-purple-100">{section.comment}</p>
+                          </div>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                ))}
+              </div>
             </div>
           </div>
         </div>
+      </div>
+
+      {/* Clause Customization & Document Editing Section */}
+      <div className="border-t border-purple-500/30">
+        <ClauseEditor isEmbedded={false} />
       </div>
 
       {/* Slide-in Clause Editor */}
