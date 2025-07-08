@@ -2,7 +2,25 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Edit, RefreshCw, Brain, AlertTriangle, CheckCircle } from "lucide-react";
+import { 
+  Edit, RefreshCw, Brain, AlertTriangle, CheckCircle, 
+  Bold, Italic, Underline, Undo, Redo, MessageSquare,
+  Eye, FileText, GitCompare, Save, Lock
+} from "lucide-react";
+import { 
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+  DropdownMenuSeparator
+} from "@/components/ui/dropdown-menu";
+import {
+  ContextMenu,
+  ContextMenuContent,
+  ContextMenuItem,
+  ContextMenuTrigger,
+  ContextMenuSeparator
+} from "@/components/ui/context-menu";
 import ClauseEditDrawer from "./ClauseEditDrawer";
 
 interface ContractClause {
@@ -13,6 +31,8 @@ interface ContractClause {
   riskLevel: 'low' | 'medium' | 'high';
   suggested?: string;
   reasoning?: string;
+  hasChanges?: boolean;
+  changeType?: 'added' | 'modified' | 'deleted';
 }
 
 interface FullDocumentEditorProps {
@@ -24,6 +44,8 @@ interface FullDocumentEditorProps {
 const FullDocumentEditor = ({ showInlineHighlights, trackChanges, comparisonMode }: FullDocumentEditorProps) => {
   const [editingClause, setEditingClause] = useState<number | null>(null);
   const [hoveredClause, setHoveredClause] = useState<number | null>(null);
+  const [documentMode, setDocumentMode] = useState<'view' | 'suggest' | 'compare'>('view');
+  const [contractScore, setContractScore] = useState(72);
   
   const contractClauses: ContractClause[] = [
     {
@@ -47,7 +69,9 @@ const FullDocumentEditor = ({ showInlineHighlights, trackChanges, comparisonMode
       content: "Company shall pay Contractor a total fee of $150,000, payable in monthly installments of $25,000. Payment shall be due within 45 days of invoice receipt.",
       riskLevel: 'medium',
       suggested: "Company shall pay Contractor a total fee of $150,000, payable in monthly installments of $25,000. Payment shall be due within 30 days of invoice receipt.",
-      reasoning: "45-day payment terms are unusually long. Industry standard is 30 days to improve cash flow."
+      reasoning: "45-day payment terms are unusually long. Industry standard is 30 days to improve cash flow.",
+      hasChanges: true,
+      changeType: 'modified'
     },
     {
       id: 4,
@@ -76,30 +100,38 @@ const FullDocumentEditor = ({ showInlineHighlights, trackChanges, comparisonMode
     }
   ];
 
-  const getRiskColor = (risk: 'low' | 'medium' | 'high') => {
-    if (!showInlineHighlights) return 'border-border';
+  const getRiskHighlight = (risk: 'low' | 'medium' | 'high') => {
+    if (!showInlineHighlights) return '';
     
     switch (risk) {
-      case 'high': return 'border-l-4 border-destructive bg-destructive/5';
-      case 'medium': return 'border-l-4 border-yellow-500 bg-yellow-500/5';
-      case 'low': return 'border-l-4 border-green-500 bg-green-500/5';
+      case 'high': return 'bg-red-500/10 border-l-2 border-red-500';
+      case 'medium': return 'bg-yellow-500/10 border-l-2 border-yellow-500';
+      case 'low': return 'bg-green-500/10 border-l-2 border-green-500';
     }
   };
 
-  const getRiskIcon = (risk: 'low' | 'medium' | 'high') => {
-    switch (risk) {
-      case 'high': return <AlertTriangle className="w-4 h-4 text-destructive" />;
-      case 'medium': return <AlertTriangle className="w-4 h-4 text-yellow-500" />;
-      case 'low': return <CheckCircle className="w-4 h-4 text-green-500" />;
+  const getChangeHighlight = (clause: ContractClause) => {
+    if (!trackChanges || !clause.hasChanges) return '';
+    
+    switch (clause.changeType) {
+      case 'added': return 'bg-green-500/20 border-green-500';
+      case 'modified': return 'bg-blue-500/20 border-blue-500';
+      case 'deleted': return 'bg-red-500/20 border-red-500 line-through';
+      default: return '';
     }
   };
 
-  const handleEditClause = (clauseId: number) => {
-    setEditingClause(clauseId);
+  const handleAcceptChange = (clauseId: number) => {
+    console.log('Accepting change for clause:', clauseId);
+    setContractScore(prev => prev + 2);
   };
 
-  const handleCloseEditor = () => {
-    setEditingClause(null);
+  const handleRejectChange = (clauseId: number) => {
+    console.log('Rejecting change for clause:', clauseId);
+  };
+
+  const handleInlineEdit = (clauseId: number) => {
+    console.log('Starting inline edit for clause:', clauseId);
   };
 
   const getClauseData = (id: number) => {
@@ -107,118 +139,297 @@ const FullDocumentEditor = ({ showInlineHighlights, trackChanges, comparisonMode
   };
 
   return (
-    <div className="h-full relative">
-      {/* Document Header */}
-      <div className="p-6 border-b border-border bg-card/50 sticky top-0 z-10">
-        <div className="text-center">
-          <h1 className="text-2xl font-bold text-foreground mb-2">SOFTWARE DEVELOPMENT SERVICES AGREEMENT</h1>
-          <p className="text-muted-foreground">ABC Corporation & XYZ Services LLC</p>
-          <p className="text-sm text-muted-foreground mt-1">Effective Date: January 15, 2024 • Draft v2.1</p>
-          {trackChanges && (
-            <Badge variant="outline" className="mt-2">
-              Track Changes: ON • Comparing to {comparisonMode === 'template' ? 'Firm Template' : comparisonMode === 'lastVersion' ? 'Last Version' : 'Industry Average'}
-            </Badge>
-          )}
+    <div className="h-full flex bg-background">
+      {/* Main Document Area */}
+      <div className="flex-1 flex flex-col">
+        {/* Document Toolbar */}
+        <div className="border-b border-border bg-card/30 p-3 flex items-center justify-between sticky top-0 z-20">
+          <div className="flex items-center space-x-1">
+            {/* Mode Selector */}
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="outline" size="sm" className="flex items-center space-x-2">
+                  {documentMode === 'view' && <Eye className="w-4 h-4" />}
+                  {documentMode === 'suggest' && <FileText className="w-4 h-4" />}
+                  {documentMode === 'compare' && <GitCompare className="w-4 h-4" />}
+                  <span className="capitalize">{documentMode} Mode</span>
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent>
+                <DropdownMenuItem onClick={() => setDocumentMode('view')}>
+                  <Eye className="w-4 h-4 mr-2" />
+                  View Mode
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => setDocumentMode('suggest')}>
+                  <FileText className="w-4 h-4 mr-2" />
+                  Suggest Mode
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => setDocumentMode('compare')}>
+                  <GitCompare className="w-4 h-4 mr-2" />
+                  Compare Mode
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+
+            <div className="w-px h-6 bg-border mx-2" />
+
+            {/* Text Formatting */}
+            <Button variant="ghost" size="sm">
+              <Bold className="w-4 h-4" />
+            </Button>
+            <Button variant="ghost" size="sm">
+              <Italic className="w-4 h-4" />
+            </Button>
+            <Button variant="ghost" size="sm">
+              <Underline className="w-4 h-4" />
+            </Button>
+
+            <div className="w-px h-6 bg-border mx-2" />
+
+            {/* History */}
+            <Button variant="ghost" size="sm">
+              <Undo className="w-4 h-4" />
+            </Button>
+            <Button variant="ghost" size="sm">
+              <Redo className="w-4 h-4" />
+            </Button>
+
+            <div className="w-px h-6 bg-border mx-2" />
+
+            {/* Comment */}
+            <Button variant="ghost" size="sm">
+              <MessageSquare className="w-4 h-4" />
+            </Button>
+          </div>
+
+          <div className="flex items-center space-x-2">
+            <Button variant="outline" size="sm">
+              <Save className="w-4 h-4 mr-2" />
+              Save Draft
+            </Button>
+            <Button size="sm" className="bg-gradient-to-r from-primary to-primary/80">
+              <Lock className="w-4 h-4 mr-2" />
+              Finalize Document
+            </Button>
+          </div>
+        </div>
+
+        {/* Document Header */}
+        <div className="p-8 pb-4 border-b border-border/50">
+          <div className="max-w-4xl mx-auto text-center">
+            <h1 className="text-3xl font-bold text-foreground mb-3">SOFTWARE DEVELOPMENT SERVICES AGREEMENT</h1>
+            <p className="text-lg text-muted-foreground mb-2">ABC Corporation & XYZ Services LLC</p>
+            <p className="text-sm text-muted-foreground">Effective Date: January 15, 2024 • Draft v2.1</p>
+            {trackChanges && (
+              <Badge variant="outline" className="mt-3">
+                Track Changes: ON • Comparing to {comparisonMode === 'template' ? 'Firm Template' : comparisonMode === 'lastVersion' ? 'Last Version' : 'Industry Average'}
+              </Badge>
+            )}
+          </div>
+        </div>
+
+        {/* Scrollable Document Content */}
+        <div className="flex-1 overflow-y-auto">
+          <div className="max-w-4xl mx-auto p-8 space-y-8">
+            {contractClauses.map((clause) => (
+              <ContextMenu key={clause.id}>
+                <ContextMenuTrigger>
+                  <div
+                    className={`
+                      relative group cursor-text transition-all duration-200 p-6 rounded-lg
+                      ${getRiskHighlight(clause.riskLevel)}
+                      ${getChangeHighlight(clause)}
+                      ${hoveredClause === clause.id ? 'shadow-lg ring-1 ring-primary/20' : ''}
+                    `}
+                    onMouseEnter={() => setHoveredClause(clause.id)}
+                    onMouseLeave={() => setHoveredClause(null)}
+                  >
+                    {/* Section Header */}
+                    <div className="flex items-center justify-between mb-4">
+                      <h2 className="text-xl font-semibold text-foreground">
+                        {clause.section}. {clause.title}
+                      </h2>
+                      
+                      {/* Hover Actions */}
+                      {hoveredClause === clause.id && (
+                        <div className="flex items-center space-x-1 opacity-100 transition-opacity">
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => handleInlineEdit(clause.id)}
+                          >
+                            <Edit className="w-4 h-4" />
+                          </Button>
+                          
+                          {clause.suggested && (
+                            <Button variant="ghost" size="sm">
+                              <RefreshCw className="w-4 h-4" />
+                            </Button>
+                          )}
+                          
+                          <Button variant="ghost" size="sm">
+                            <GitCompare className="w-4 h-4" />
+                          </Button>
+                          
+                          {clause.reasoning && (
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              onClick={() => setEditingClause(clause.id)}
+                            >
+                              <Brain className="w-4 h-4" />
+                            </Button>
+                          )}
+                        </div>
+                      )}
+                    </div>
+
+                    {/* Clause Content - Editable */}
+                    <div
+                      className="prose prose-sm max-w-none text-foreground/90 leading-relaxed focus:outline-none"
+                      contentEditable={documentMode === 'suggest'}
+                      suppressContentEditableWarning={true}
+                    >
+                      {clause.content}
+                    </div>
+
+                    {/* Change Indicators */}
+                    {trackChanges && clause.hasChanges && (
+                      <div className="mt-4 flex items-center justify-between p-3 bg-muted/50 rounded-lg">
+                        <div className="flex items-center space-x-2">
+                          <Badge variant="outline" className="text-xs">
+                            {clause.changeType?.toUpperCase()}
+                          </Badge>
+                          <span className="text-sm text-muted-foreground">
+                            {clause.changeType === 'modified' ? 'Payment terms adjusted' : 'Change detected'}
+                          </span>
+                        </div>
+                        <div className="flex items-center space-x-2">
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => handleAcceptChange(clause.id)}
+                          >
+                            <CheckCircle className="w-4 h-4 mr-1" />
+                            Accept
+                          </Button>
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => handleRejectChange(clause.id)}
+                          >
+                            Reject
+                          </Button>
+                        </div>
+                      </div>
+                    )}
+
+                    {/* AI Suggestion Preview */}
+                    {clause.suggested && showInlineHighlights && documentMode === 'suggest' && (
+                      <div className="mt-4 p-4 bg-primary/5 border border-primary/20 rounded-lg">
+                        <div className="flex items-center space-x-2 mb-2">
+                          <Brain className="w-4 h-4 text-primary" />
+                          <span className="text-sm font-medium text-primary">AI Suggested Revision</span>
+                        </div>
+                        <p className="text-sm text-muted-foreground italic">
+                          {clause.suggested}
+                        </p>
+                      </div>
+                    )}
+                  </div>
+                </ContextMenuTrigger>
+                
+                <ContextMenuContent>
+                  <ContextMenuItem onClick={() => handleInlineEdit(clause.id)}>
+                    <Edit className="w-4 h-4 mr-2" />
+                    Edit Clause
+                  </ContextMenuItem>
+                  {clause.suggested && (
+                    <ContextMenuItem>
+                      <RefreshCw className="w-4 h-4 mr-2" />
+                      See AI Suggestion
+                    </ContextMenuItem>
+                  )}
+                  <ContextMenuItem>
+                    <GitCompare className="w-4 h-4 mr-2" />
+                    Compare to Template
+                  </ContextMenuItem>
+                  {clause.reasoning && (
+                    <ContextMenuItem onClick={() => setEditingClause(clause.id)}>
+                      <Brain className="w-4 h-4 mr-2" />
+                      View Reasoning
+                    </ContextMenuItem>
+                  )}
+                  <ContextMenuSeparator />
+                  <ContextMenuItem>
+                    <MessageSquare className="w-4 h-4 mr-2" />
+                    Add Comment
+                  </ContextMenuItem>
+                  {trackChanges && clause.hasChanges && (
+                    <>
+                      <ContextMenuSeparator />
+                      <ContextMenuItem onClick={() => handleAcceptChange(clause.id)}>
+                        <CheckCircle className="w-4 h-4 mr-2" />
+                        Accept Change
+                      </ContextMenuItem>
+                      <ContextMenuItem onClick={() => handleRejectChange(clause.id)}>
+                        Reject Change
+                      </ContextMenuItem>
+                    </>
+                  )}
+                </ContextMenuContent>
+              </ContextMenu>
+            ))}
+          </div>
         </div>
       </div>
 
-      {/* Scrollable Document Content */}
-      <div className="flex-1 overflow-y-auto">
-        <div className="max-w-4xl mx-auto p-6 space-y-6">
-          {contractClauses.map((clause) => (
-            <div
-              key={clause.id}
-              className={`relative group rounded-lg border transition-all duration-200 ${getRiskColor(clause.riskLevel)} ${
-                hoveredClause === clause.id ? 'shadow-lg scale-[1.01]' : 'shadow-sm'
-              }`}
-              onMouseEnter={() => setHoveredClause(clause.id)}
-              onMouseLeave={() => setHoveredClause(null)}
-            >
-              {/* Risk Level Sidebar Marker */}
-              {showInlineHighlights && (
-                <div className="absolute -left-8 top-4 flex flex-col items-center space-y-1">
-                  {getRiskIcon(clause.riskLevel)}
-                  <div className="text-xs text-muted-foreground transform -rotate-90 whitespace-nowrap">
-                    {clause.section}
-                  </div>
-                </div>
-              )}
+      {/* Sidebar - Contract Intelligence */}
+      <div className="w-80 border-l border-border bg-card/30 sticky top-0 h-screen overflow-y-auto">
+        <div className="p-4 border-b border-border">
+          <h3 className="font-semibold text-foreground mb-2">Contract Analysis</h3>
+          <div className="flex items-center space-x-2">
+            <div className="flex-1 bg-muted rounded-full h-2">
+              <div 
+                className="bg-gradient-to-r from-primary to-primary/80 h-2 rounded-full transition-all duration-500"
+                style={{ width: `${contractScore}%` }}
+              />
+            </div>
+            <span className="text-sm font-medium text-foreground">{contractScore}%</span>
+          </div>
+        </div>
 
-              <div className="p-6">
-                {/* Clause Header */}
-                <div className="flex items-center justify-between mb-4">
-                  <div className="flex items-center space-x-3">
-                    {showInlineHighlights && getRiskIcon(clause.riskLevel)}
-                    <h3 className="text-lg font-semibold text-foreground">
-                      {clause.section}. {clause.title}
-                    </h3>
-                    {showInlineHighlights && (
-                      <Badge variant="outline" className="text-xs">
-                        {clause.riskLevel.toUpperCase()}
-                      </Badge>
-                    )}
-                  </div>
+        <div className="p-4 space-y-4">
+          <div className="space-y-2">
+            <div className="flex items-center justify-between text-sm">
+              <span className="text-muted-foreground">High Risk Clauses</span>
+              <span className="text-destructive font-medium">1</span>
+            </div>
+            <div className="flex items-center justify-between text-sm">
+              <span className="text-muted-foreground">Medium Risk</span>
+              <span className="text-yellow-500 font-medium">2</span>
+            </div>
+            <div className="flex items-center justify-between text-sm">
+              <span className="text-muted-foreground">Low Risk</span>
+              <span className="text-green-500 font-medium">3</span>
+            </div>
+          </div>
 
-                  {/* Hover Actions */}
-                  {hoveredClause === clause.id && (
-                    <div className="flex items-center space-x-2 opacity-100 transition-opacity">
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        onClick={() => handleEditClause(clause.id)}
-                        className="flex items-center space-x-1"
-                      >
-                        <Edit className="w-4 h-4" />
-                        <span className="text-xs">Edit</span>
-                      </Button>
-                      
-                      {clause.suggested && (
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          className="flex items-center space-x-1"
-                        >
-                          <RefreshCw className="w-4 h-4" />
-                          <span className="text-xs">AI Suggestion</span>
-                        </Button>
-                      )}
-                      
-                      {clause.reasoning && (
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          className="flex items-center space-x-1"
-                        >
-                          <Brain className="w-4 h-4" />
-                          <span className="text-xs">Reasoning</span>
-                        </Button>
-                      )}
-                    </div>
-                  )}
-                </div>
+          <div className="pt-4 border-t border-border">
+            <Button variant="outline" className="w-full justify-start">
+              <Brain className="w-4 h-4 mr-2" />
+              Ask AI about this section
+            </Button>
+          </div>
 
-                {/* Clause Content */}
-                <div className="prose prose-sm max-w-none">
-                  <p className="text-foreground/90 leading-relaxed">
-                    {clause.content}
-                  </p>
-                </div>
-
-                {/* AI Suggestion Preview */}
-                {clause.suggested && showInlineHighlights && (
-                  <div className="mt-4 p-3 bg-primary/5 border border-primary/20 rounded-lg">
-                    <div className="flex items-center space-x-2 mb-2">
-                      <Brain className="w-4 h-4 text-primary" />
-                      <span className="text-sm font-medium text-primary">AI Suggested Revision</span>
-                    </div>
-                    <p className="text-sm text-muted-foreground">
-                      {clause.suggested}
-                    </p>
-                  </div>
-                )}
+          <div className="pt-4 space-y-2">
+            <h4 className="text-sm font-medium text-foreground">Recent Changes</h4>
+            <div className="text-xs text-muted-foreground space-y-1">
+              <div className="p-2 bg-muted/50 rounded">
+                Payment terms: 45 → 30 days
               </div>
             </div>
-          ))}
+          </div>
         </div>
       </div>
 
@@ -226,7 +437,7 @@ const FullDocumentEditor = ({ showInlineHighlights, trackChanges, comparisonMode
       {editingClause && (
         <ClauseEditDrawer
           clauseData={getClauseData(editingClause)}
-          onClose={handleCloseEditor}
+          onClose={() => setEditingClause(null)}
           comparisonMode={comparisonMode}
         />
       )}
