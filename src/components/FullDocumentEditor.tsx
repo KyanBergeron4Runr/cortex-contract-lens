@@ -33,6 +33,7 @@ interface ContractClause {
   reasoning?: string;
   hasChanges?: boolean;
   changeType?: 'added' | 'modified' | 'deleted';
+  aiNote?: string;
 }
 
 interface FullDocumentEditorProps {
@@ -71,7 +72,8 @@ const FullDocumentEditor = ({ showInlineHighlights, trackChanges, comparisonMode
       suggested: "Company shall pay Contractor a total fee of $150,000, payable in monthly installments of $25,000. Payment shall be due within 30 days of invoice receipt.",
       reasoning: "45-day payment terms are unusually long. Industry standard is 30 days to improve cash flow.",
       hasChanges: true,
-      changeType: 'modified'
+      changeType: 'modified',
+      aiNote: "Industry standard is 30 days. Consider renegotiating to reduce cash flow risk."
     },
     {
       id: 4,
@@ -79,8 +81,9 @@ const FullDocumentEditor = ({ showInlineHighlights, trackChanges, comparisonMode
       title: "INTELLECTUAL PROPERTY",
       content: "All work product, including but not limited to source code, documentation, and derivative works, shall remain the exclusive property of Contractor unless explicitly transferred in writing.",
       riskLevel: 'high',
-      suggested: "All work product, including but not limited to source code, documentation, and derivative works, shall be the exclusive property of Company upon payment.",
-      reasoning: "Current clause gives all IP rights to contractor, which poses significant business risk. Standard practice is for hiring company to retain IP rights."
+      suggested: "All work product, including but not limited to source code, documentation, and derivative works, shall be the exclusive property of Company upon payment completion.",
+      reasoning: "Current clause gives all IP rights to contractor, which poses significant business risk. Standard practice is for hiring company to retain IP rights.",
+      aiNote: "This clause grants all IP to the contractor. This is atypical for client-owned projects."
     },
     {
       id: 5,
@@ -89,13 +92,31 @@ const FullDocumentEditor = ({ showInlineHighlights, trackChanges, comparisonMode
       content: "Both parties agree to maintain confidentiality of proprietary information shared during the course of this engagement for a period of two (2) years following termination.",
       riskLevel: 'medium',
       suggested: "Both parties agree to maintain confidentiality of proprietary information shared during the course of this engagement for a period of five (5) years following termination.",
-      reasoning: "Two-year confidentiality period may be insufficient for proprietary technology. Industry standard for tech companies is typically 5 years."
+      reasoning: "Two-year confidentiality period may be insufficient for proprietary technology. Industry standard for tech companies is typically 5 years.",
+      aiNote: "Some firms extend this to 3–5 years depending on data type."
     },
     {
       id: 6,
       section: "6",
       title: "TERMINATION",
       content: "Either party may terminate this agreement with thirty (30) days written notice. Upon termination, all work product shall be delivered to Company.",
+      riskLevel: 'low'
+    },
+    {
+      id: 7,
+      section: "7",
+      title: "LIMITATION OF LIABILITY",
+      content: "Contractor's total liability under this Agreement shall not exceed the total fees paid by Company under this Agreement. Contractor shall not be liable for any indirect, incidental, or consequential damages.",
+      riskLevel: 'high',
+      suggested: "Both parties' total liability under this Agreement shall not exceed the total fees paid under this Agreement. Neither party shall be liable for any indirect, incidental, or consequential damages.",
+      reasoning: "One-sided limitation in favour of Contractor. Recommend negotiating mutual limitations.",
+      aiNote: "One-sided limitation in favour of Contractor. Recommend negotiating mutual limitations."
+    },
+    {
+      id: 8,
+      section: "8",
+      title: "GOVERNING LAW",
+      content: "This Agreement shall be governed by and construed in accordance with the laws of the State of New York, without regard to its conflict of law provisions.",
       riskLevel: 'low'
     }
   ];
@@ -104,9 +125,9 @@ const FullDocumentEditor = ({ showInlineHighlights, trackChanges, comparisonMode
     if (!showInlineHighlights) return '';
     
     switch (risk) {
-      case 'high': return 'bg-red-500/10 border-l-2 border-red-500';
-      case 'medium': return 'bg-yellow-500/10 border-l-2 border-yellow-500';
-      case 'low': return 'bg-green-500/10 border-l-2 border-green-500';
+      case 'high': return 'bg-red-500/10 border-l-4 border-red-500';
+      case 'medium': return 'bg-yellow-500/10 border-l-4 border-yellow-500';
+      case 'low': return 'bg-green-500/10 border-l-4 border-green-500';
     }
   };
 
@@ -132,6 +153,11 @@ const FullDocumentEditor = ({ showInlineHighlights, trackChanges, comparisonMode
 
   const handleInlineEdit = (clauseId: number) => {
     console.log('Starting inline edit for clause:', clauseId);
+  };
+
+  const handleAcceptSuggestion = (clauseId: number) => {
+    console.log('Accepting AI suggestion for clause:', clauseId);
+    setContractScore(prev => prev + 3);
   };
 
   const getClauseData = (id: number) => {
@@ -262,7 +288,11 @@ const FullDocumentEditor = ({ showInlineHighlights, trackChanges, comparisonMode
                           </Button>
                           
                           {clause.suggested && (
-                            <Button variant="ghost" size="sm">
+                            <Button 
+                              variant="ghost" 
+                              size="sm"
+                              onClick={() => handleAcceptSuggestion(clause.id)}
+                            >
                               <RefreshCw className="w-4 h-4" />
                             </Button>
                           )}
@@ -292,6 +322,56 @@ const FullDocumentEditor = ({ showInlineHighlights, trackChanges, comparisonMode
                     >
                       {clause.content}
                     </div>
+
+                    {/* AI Note Display */}
+                    {clause.aiNote && showInlineHighlights && (
+                      <div className={`mt-3 p-3 rounded-lg border-l-4 ${
+                        clause.riskLevel === 'high' ? 'bg-red-500/10 border-red-500' :
+                        clause.riskLevel === 'medium' ? 'bg-yellow-500/10 border-yellow-500' :
+                        'bg-green-500/10 border-green-500'
+                      }`}>
+                        <div className="flex items-start space-x-2">
+                          {clause.riskLevel === 'high' ? (
+                            <span className="text-red-500 font-bold">🔴</span>
+                          ) : clause.riskLevel === 'medium' ? (
+                            <span className="text-yellow-500 font-bold">🟡</span>
+                          ) : (
+                            <span className="text-green-500 font-bold">🟢</span>
+                          )}
+                          <div>
+                            <span className="text-sm font-medium text-muted-foreground">
+                              {clause.riskLevel === 'high' ? 'AI Risk: ' : 'AI Note: '}
+                            </span>
+                            <span className="text-sm text-muted-foreground italic">
+                              {clause.aiNote}
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+                    )}
+
+                    {/* AI Suggestion Preview */}
+                    {clause.suggested && showInlineHighlights && documentMode === 'suggest' && (
+                      <div className="mt-4 p-4 bg-primary/5 border border-primary/20 rounded-lg">
+                        <div className="flex items-center justify-between mb-2">
+                          <div className="flex items-center space-x-2">
+                            <span className="text-green-500 font-bold">✅</span>
+                            <span className="text-sm font-medium text-primary">Suggested Revision</span>
+                          </div>
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => handleAcceptSuggestion(clause.id)}
+                          >
+                            <CheckCircle className="w-4 h-4 mr-1" />
+                            Accept
+                          </Button>
+                        </div>
+                        <p className="text-sm text-muted-foreground italic">
+                          {clause.suggested}
+                        </p>
+                      </div>
+                    )}
 
                     {/* Change Indicators */}
                     {trackChanges && clause.hasChanges && (
@@ -323,19 +403,6 @@ const FullDocumentEditor = ({ showInlineHighlights, trackChanges, comparisonMode
                         </div>
                       </div>
                     )}
-
-                    {/* AI Suggestion Preview */}
-                    {clause.suggested && showInlineHighlights && documentMode === 'suggest' && (
-                      <div className="mt-4 p-4 bg-primary/5 border border-primary/20 rounded-lg">
-                        <div className="flex items-center space-x-2 mb-2">
-                          <Brain className="w-4 h-4 text-primary" />
-                          <span className="text-sm font-medium text-primary">AI Suggested Revision</span>
-                        </div>
-                        <p className="text-sm text-muted-foreground italic">
-                          {clause.suggested}
-                        </p>
-                      </div>
-                    )}
                   </div>
                 </ContextMenuTrigger>
                 
@@ -345,9 +412,9 @@ const FullDocumentEditor = ({ showInlineHighlights, trackChanges, comparisonMode
                     Edit Clause
                   </ContextMenuItem>
                   {clause.suggested && (
-                    <ContextMenuItem>
+                    <ContextMenuItem onClick={() => handleAcceptSuggestion(clause.id)}>
                       <RefreshCw className="w-4 h-4 mr-2" />
-                      See AI Suggestion
+                      Accept AI Suggestion
                     </ContextMenuItem>
                   )}
                   <ContextMenuItem>
@@ -403,7 +470,7 @@ const FullDocumentEditor = ({ showInlineHighlights, trackChanges, comparisonMode
           <div className="space-y-2">
             <div className="flex items-center justify-between text-sm">
               <span className="text-muted-foreground">High Risk Clauses</span>
-              <span className="text-destructive font-medium">1</span>
+              <span className="text-destructive font-medium">2</span>
             </div>
             <div className="flex items-center justify-between text-sm">
               <span className="text-muted-foreground">Medium Risk</span>
@@ -411,7 +478,7 @@ const FullDocumentEditor = ({ showInlineHighlights, trackChanges, comparisonMode
             </div>
             <div className="flex items-center justify-between text-sm">
               <span className="text-muted-foreground">Low Risk</span>
-              <span className="text-green-500 font-medium">3</span>
+              <span className="text-green-500 font-medium">4</span>
             </div>
           </div>
 
@@ -423,10 +490,19 @@ const FullDocumentEditor = ({ showInlineHighlights, trackChanges, comparisonMode
           </div>
 
           <div className="pt-4 space-y-2">
-            <h4 className="text-sm font-medium text-foreground">Recent Changes</h4>
-            <div className="text-xs text-muted-foreground space-y-1">
-              <div className="p-2 bg-muted/50 rounded">
-                Payment terms: 45 → 30 days
+            <h4 className="text-sm font-medium text-foreground">Key Risk Areas</h4>
+            <div className="text-xs text-muted-foreground space-y-2">
+              <div className="p-2 bg-red-500/10 rounded border-l-2 border-red-500">
+                <div className="font-medium text-red-500">IP Rights Issue</div>
+                <div>Section 4: Contractor retains all IP</div>
+              </div>
+              <div className="p-2 bg-red-500/10 rounded border-l-2 border-red-500">
+                <div className="font-medium text-red-500">Liability Imbalance</div>
+                <div>Section 7: One-sided limitations</div>
+              </div>
+              <div className="p-2 bg-yellow-500/10 rounded border-l-2 border-yellow-500">
+                <div className="font-medium text-yellow-500">Payment Terms</div>
+                <div>Section 3: 45-day payment period</div>
               </div>
             </div>
           </div>
