@@ -12,12 +12,33 @@ interface ClauseIntelligencePanelProps {
   onTabChange: (tab: 'chat' | 'comparison' | 'memory') => void;
 }
 
+interface BotMessage {
+  id: number;
+  type: "bot";
+  content: string;
+  timestamp: string;
+  analysis: {
+    summary: string;
+    comparison: string;
+    recommendation: string;
+  };
+}
+
+interface UserMessage {
+  id: number;
+  type: "user";
+  content: string;
+  timestamp: string;
+}
+
+type Message = BotMessage | UserMessage;
+
 const ClauseIntelligencePanel = ({ selectedClause, activeTab, onTabChange }: ClauseIntelligencePanelProps) => {
   const [chatInput, setChatInput] = useState("");
-  const [messages, setMessages] = useState([
+  const [messages, setMessages] = useState<Message[]>([
     {
       id: 1,
-      type: "bot" as const,
+      type: "bot",
       content: "I've analyzed your contract and identified several key risks. The IP clause in Section 4 requires immediate attention. How can I help you today?",
       timestamp: "2:30 PM",
       analysis: {
@@ -31,9 +52,9 @@ const ClauseIntelligencePanel = ({ selectedClause, activeTab, onTabChange }: Cla
   const handleSendMessage = () => {
     if (!chatInput.trim()) return;
     
-    const newMessage = {
+    const newMessage: UserMessage = {
       id: messages.length + 1,
-      type: "user" as const,
+      type: "user",
       content: chatInput,
       timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
     };
@@ -43,9 +64,9 @@ const ClauseIntelligencePanel = ({ selectedClause, activeTab, onTabChange }: Cla
     
     // Simulate AI response
     setTimeout(() => {
-      const aiResponse = {
+      const aiResponse: BotMessage = {
         id: messages.length + 2,
-        type: "bot" as const,
+        type: "bot",
         content: "Based on your query, I'm analyzing the clause against our database of similar contracts...",
         timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
         analysis: {
@@ -110,7 +131,7 @@ const ClauseIntelligencePanel = ({ selectedClause, activeTab, onTabChange }: Cla
                     }`}>
                       <div className="text-sm">{message.content}</div>
                       
-                      {message.type === 'bot' && message.analysis && (
+                      {message.type === 'bot' && (
                         <div className="mt-3 space-y-2 border-t border-border/50 pt-2">
                           <div className="flex items-center space-x-2">
                             <Brain className="w-3 h-3 text-primary" />
