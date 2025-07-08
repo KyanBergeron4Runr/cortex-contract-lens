@@ -3,6 +3,7 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { Badge } from "@/components/ui/badge";
+import { Switch } from "@/components/ui/switch";
 import { 
   Download, 
   FileText, 
@@ -16,15 +17,33 @@ import {
   BarChart3,
   ChevronUp,
   AlertTriangle,
-  CheckCircle
+  CheckCircle,
+  Eye,
+  GitBranch,
+  Highlighter
 } from "lucide-react";
 
 interface ActionControlsFooterProps {
   viewMode: 'tree' | 'list';
   onViewModeChange: (mode: 'tree' | 'list') => void;
+  showInlineHighlights: boolean;
+  onHighlightsToggle: (show: boolean) => void;
+  trackChanges: boolean;
+  onTrackChangesToggle: (track: boolean) => void;
+  comparisonMode: 'template' | 'lastVersion' | 'industry';
+  onComparisonModeChange: (mode: 'template' | 'lastVersion' | 'industry') => void;
 }
 
-const ActionControlsFooter = ({ viewMode, onViewModeChange }: ActionControlsFooterProps) => {
+const ActionControlsFooter = ({ 
+  viewMode, 
+  onViewModeChange,
+  showInlineHighlights,
+  onHighlightsToggle,
+  trackChanges,
+  onTrackChangesToggle,
+  comparisonMode,
+  onComparisonModeChange
+}: ActionControlsFooterProps) => {
   const [showSummary, setShowSummary] = useState(false);
 
   return (
@@ -108,27 +127,75 @@ const ActionControlsFooter = ({ viewMode, onViewModeChange }: ActionControlsFoot
             </div>
           </div>
 
-          {/* Center - View Controls */}
-          <div className="flex items-center space-x-2">
-            <span className="text-sm text-muted-foreground">View:</span>
-            <Button
-              variant={viewMode === 'list' ? 'default' : 'outline'}
-              size="sm"
-              onClick={() => onViewModeChange('list')}
-              className="flex items-center space-x-1"
-            >
-              <List className="w-4 h-4" />
-              <span>List</span>
-            </Button>
-            <Button
-              variant={viewMode === 'tree' ? 'default' : 'outline'}
-              size="sm"
-              onClick={() => onViewModeChange('tree')}
-              className="flex items-center space-x-1"
-            >
-              <TreePine className="w-4 h-4" />
-              <span>Tree</span>
-            </Button>
+          {/* Center - View & Editing Controls */}
+          <div className="flex items-center space-x-4">
+            {/* View Mode Toggle */}
+            <div className="flex items-center space-x-2">
+              <span className="text-sm text-muted-foreground">View:</span>
+              <Button
+                variant={viewMode === 'list' ? 'default' : 'outline'}
+                size="sm"
+                onClick={() => onViewModeChange('list')}
+                className="flex items-center space-x-1"
+              >
+                <List className="w-4 h-4" />
+                <span>List</span>
+              </Button>
+              <Button
+                variant={viewMode === 'tree' ? 'default' : 'outline'}
+                size="sm"
+                onClick={() => onViewModeChange('tree')}
+                className="flex items-center space-x-1"
+              >
+                <TreePine className="w-4 h-4" />
+                <span>Tree</span>
+              </Button>
+            </div>
+
+            {/* Editing Controls */}
+            <div className="flex items-center space-x-4">
+              <div className="flex items-center space-x-2">
+                <Highlighter className="w-4 h-4 text-muted-foreground" />
+                <span className="text-sm text-muted-foreground">Highlights</span>
+                <Switch
+                  checked={showInlineHighlights}
+                  onCheckedChange={onHighlightsToggle}
+                />
+              </div>
+
+              <div className="flex items-center space-x-2">
+                <GitBranch className="w-4 h-4 text-muted-foreground" />
+                <span className="text-sm text-muted-foreground">Track Changes</span>
+                <Switch
+                  checked={trackChanges}
+                  onCheckedChange={onTrackChangesToggle}
+                />
+              </div>
+
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="outline" size="sm" className="flex items-center space-x-2">
+                    <Eye className="w-4 h-4" />
+                    <span>Compare to</span>
+                    <span className="capitalize text-primary">{comparisonMode === 'template' ? 'Template' : comparisonMode === 'lastVersion' ? 'Last Version' : 'Industry'}</span>
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="center">
+                  <DropdownMenuItem onClick={() => onComparisonModeChange('template')}>
+                    <FileText className="w-4 h-4 mr-2" />
+                    Firm Template
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => onComparisonModeChange('lastVersion')}>
+                    <Clock className="w-4 h-4 mr-2" />
+                    Last Version
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => onComparisonModeChange('industry')}>
+                    <BarChart3 className="w-4 h-4 mr-2" />
+                    Industry Average
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            </div>
           </div>
 
           {/* Right Side - Actions */}

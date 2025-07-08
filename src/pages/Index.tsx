@@ -1,14 +1,20 @@
 
 import { useState } from "react";
 import InteractiveContractViewer from "@/components/InteractiveContractViewer";
+import FullDocumentEditor from "@/components/FullDocumentEditor";
 import ClauseIntelligencePanel from "@/components/ClauseIntelligencePanel";
 import ActionControlsFooter from "@/components/ActionControlsFooter";
 import { Button } from "@/components/ui/button";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 const Index = () => {
   const [selectedClause, setSelectedClause] = useState<number | null>(null);
   const [activeTab, setActiveTab] = useState<'chat' | 'comparison' | 'memory'>('chat');
   const [viewMode, setViewMode] = useState<'tree' | 'list'>('list');
+  const [documentViewMode, setDocumentViewMode] = useState<'blocks' | 'document'>('document');
+  const [showInlineHighlights, setShowInlineHighlights] = useState(true);
+  const [trackChanges, setTrackChanges] = useState(false);
+  const [comparisonMode, setComparisonMode] = useState<'template' | 'lastVersion' | 'industry'>('template');
 
   return (
     <div className="min-h-screen bg-background text-foreground font-['Inter',sans-serif] flex flex-col">
@@ -25,6 +31,12 @@ const Index = () => {
             </div>
           </div>
           <div className="flex items-center space-x-3">
+            <Tabs value={documentViewMode} onValueChange={(value) => setDocumentViewMode(value as 'blocks' | 'document')}>
+              <TabsList>
+                <TabsTrigger value="blocks">Clause Blocks</TabsTrigger>
+                <TabsTrigger value="document">Full Document</TabsTrigger>
+              </TabsList>
+            </Tabs>
             <Button variant="outline" size="sm">
               New Analysis
             </Button>
@@ -37,13 +49,21 @@ const Index = () => {
 
       {/* Main Content Area */}
       <div className="flex-1 flex">
-        {/* Zone 1: Interactive Contract Viewer (Left 60%) */}
+        {/* Zone 1: Contract Viewer (Left 60%) */}
         <div className="flex-1 w-3/5 bg-card/30 border-r border-border">
-          <InteractiveContractViewer 
-            selectedClause={selectedClause}
-            onClauseSelect={setSelectedClause}
-            viewMode={viewMode}
-          />
+          {documentViewMode === 'blocks' ? (
+            <InteractiveContractViewer 
+              selectedClause={selectedClause}
+              onClauseSelect={setSelectedClause}
+              viewMode={viewMode}
+            />
+          ) : (
+            <FullDocumentEditor
+              showInlineHighlights={showInlineHighlights}
+              trackChanges={trackChanges}
+              comparisonMode={comparisonMode}
+            />
+          )}
         </div>
 
         {/* Zone 2: Clause Intelligence Panel (Right 40%) */}
@@ -60,6 +80,12 @@ const Index = () => {
       <ActionControlsFooter 
         viewMode={viewMode}
         onViewModeChange={setViewMode}
+        showInlineHighlights={showInlineHighlights}
+        onHighlightsToggle={setShowInlineHighlights}
+        trackChanges={trackChanges}
+        onTrackChangesToggle={setTrackChanges}
+        comparisonMode={comparisonMode}
+        onComparisonModeChange={setComparisonMode}
       />
     </div>
   );
