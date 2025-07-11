@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { Switch } from "@/components/ui/switch";
 import DocumentToolbar from "./DocumentToolbar";
 import DocumentHeader from "./DocumentHeader";
 import ContractClauseComponent from "./ContractClause";
@@ -29,6 +30,7 @@ const FullDocumentEditor = ({ showInlineHighlights, trackChanges, comparisonMode
   const [hoveredClause, setHoveredClause] = useState<number | null>(null);
   const [documentMode, setDocumentMode] = useState<'view' | 'suggest' | 'compare'>('view');
   const [contractScore, setContractScore] = useState(72);
+  const [isEditMode, setIsEditMode] = useState(false);
   
   const contractClauses: ContractClause[] = [
     {
@@ -139,24 +141,40 @@ const FullDocumentEditor = ({ showInlineHighlights, trackChanges, comparisonMode
           comparisonMode={comparisonMode}
         />
 
-        {/* Scrollable Document Content */}
-        <div className="flex-1 overflow-y-auto">
+        {/* Mode Toggle */}
+        <div className="px-8 py-4 border-b border-border/50 flex justify-end">
+          <div className="flex items-center space-x-3">
+            <span className="text-sm text-muted-foreground">Review Mode</span>
+            <Switch 
+              checked={isEditMode}
+              onCheckedChange={setIsEditMode}
+            />
+            <span className="text-sm text-muted-foreground">Edit Mode</span>
+          </div>
+        </div>
+
+        {/* Scrollable Document Content with Custom Scrollbar */}
+        <div className="flex-1 overflow-y-auto custom-scrollbar">
           <div className="max-w-4xl mx-auto p-8 space-y-8">
             {contractClauses.map((clause) => (
-              <ContractClauseComponent
+              <div
                 key={clause.id}
-                clause={clause}
-                hoveredClause={hoveredClause}
-                setHoveredClause={setHoveredClause}
-                showInlineHighlights={showInlineHighlights}
-                trackChanges={trackChanges}
-                documentMode={documentMode}
-                onEdit={handleInlineEdit}
-                onAcceptSuggestion={handleAcceptSuggestion}
-                onAcceptChange={handleAcceptChange}
-                onRejectChange={handleRejectChange}
-                onViewReasoning={setEditingClause}
-              />
+                className="group transition-all duration-200 hover:scale-[1.01] hover:shadow-lg"
+              >
+                <ContractClauseComponent
+                  clause={clause}
+                  hoveredClause={hoveredClause}
+                  setHoveredClause={setHoveredClause}
+                  showInlineHighlights={showInlineHighlights}
+                  trackChanges={trackChanges}
+                  documentMode={documentMode}
+                  onEdit={handleInlineEdit}
+                  onAcceptSuggestion={handleAcceptSuggestion}
+                  onAcceptChange={handleAcceptChange}
+                  onRejectChange={handleRejectChange}
+                  onViewReasoning={setEditingClause}
+                />
+              </div>
             ))}
           </div>
         </div>
