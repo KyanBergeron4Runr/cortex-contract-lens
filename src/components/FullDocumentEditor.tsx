@@ -1,8 +1,7 @@
-
 import { useState } from "react";
 import DocumentToolbar from "./DocumentToolbar";
 import DocumentHeader from "./DocumentHeader";
-import ContractClause from "./ContractClause";
+import ContractClauseComponent from "./ContractClause";
 import ContractSidebar from "./ContractSidebar";
 import ClauseEditDrawer from "./ClauseEditDrawer";
 
@@ -144,7 +143,7 @@ const FullDocumentEditor = ({ showInlineHighlights, trackChanges, comparisonMode
         <div className="flex-1 overflow-y-auto">
           <div className="max-w-4xl mx-auto p-8 space-y-8">
             {contractClauses.map((clause) => (
-              <ContractClause
+              <ContractClauseComponent
                 key={clause.id}
                 clause={clause}
                 hoveredClause={hoveredClause}

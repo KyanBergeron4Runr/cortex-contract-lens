@@ -1,5 +1,5 @@
 
-import { ArrowRight, Play, GitBranch } from "lucide-react";
+import { ArrowRight, Play, GitBranch, Monitor } from "lucide-react";
 import FullDocumentEditor from "./FullDocumentEditor";
 import VideoSection from "./VideoSection";
 import FlowMapSection from "./FlowMapSection";
@@ -23,24 +23,49 @@ const DemoPage = () => {
           </div>
         </div>
 
-        {/* Section 1: UI Showcase */}
+        {/* Section 1: Interactive Contract Analysis in Fake Browser */}
         <section className="mb-32">
           <div className="text-center mb-12">
-            <h2 className="text-3xl font-semibold mb-4 text-foreground">
-              Interactive Contract Analysis
-            </h2>
+            <div className="flex items-center justify-center mb-4">
+              <Monitor className="w-8 h-8 mr-3 text-primary" />
+              <h2 className="text-3xl font-semibold text-foreground">
+                Interactive Contract Analysis
+              </h2>
+            </div>
             <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
               Experience our full-featured contract editor with real-time AI analysis, 
               risk detection, and intelligent suggestions.
             </p>
           </div>
           
-          <div className="bg-card/20 backdrop-blur-sm rounded-2xl border border-border/50 overflow-hidden shadow-2xl">
-            <FullDocumentEditor 
-              showInlineHighlights={true}
-              trackChanges={false}
-              comparisonMode="template"
-            />
+          {/* Fake Browser Frame */}
+          <div className="bg-gradient-to-r from-primary/20 to-primary/10 rounded-2xl p-1">
+            <div className="bg-card/40 backdrop-blur-sm rounded-xl overflow-hidden shadow-2xl">
+              {/* Browser Header */}
+              <div className="bg-muted/50 px-4 py-3 flex items-center space-x-2 border-b border-border/30">
+                <div className="flex space-x-2">
+                  <div className="w-3 h-3 bg-red-500 rounded-full"></div>
+                  <div className="w-3 h-3 bg-yellow-500 rounded-full"></div>
+                  <div className="w-3 h-3 bg-green-500 rounded-full"></div>
+                </div>
+                <div className="flex-1 mx-4">
+                  <div className="bg-background/50 rounded px-3 py-1 text-sm text-muted-foreground">
+                    https://cortex.4runr.com/contract-analysis
+                  </div>
+                </div>
+              </div>
+              
+              {/* Contract Editor - Scaled Down */}
+              <div className="h-[600px] overflow-hidden">
+                <div className="transform scale-90 origin-top-left w-[111%] h-[111%]">
+                  <FullDocumentEditor 
+                    showInlineHighlights={true}
+                    trackChanges={false}
+                    comparisonMode="template"
+                  />
+                </div>
+              </div>
+            </div>
           </div>
         </section>
 
