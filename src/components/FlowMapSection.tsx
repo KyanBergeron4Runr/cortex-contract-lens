@@ -1,5 +1,5 @@
 
-import { GitBranch, Workflow, ArrowRight } from "lucide-react";
+import { GitBranch, Workflow } from "lucide-react";
 
 const FlowMapSection = () => {
   return (
@@ -20,10 +20,10 @@ const FlowMapSection = () => {
       <div className="relative group">
         <div className="bg-gradient-to-r from-primary/20 to-primary/10 rounded-2xl p-1">
           <div className="bg-card/40 backdrop-blur-sm rounded-xl overflow-hidden shadow-2xl">
-            <div className="relative aspect-video">
+            <div className="relative h-[800px]">
               <iframe
                 className="w-full h-full rounded-xl"
-                src="https://miro.com/app/live-embed/uXjVKzzjNkM=/?moveToViewport=-2393,-1229,5430,2739&embedId=861016749574"
+                src="https://miro.com/app/live-embed/uXjVIgOMtHQ=/?embedMode=view_only_without_ui&moveToViewport=12722%2C1353%2C4504%2C2250&embedId=256437603762"
                 title="4Runr Cortex Workflow Diagram"
                 frameBorder="0"
                 scrolling="no"

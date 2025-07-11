@@ -1,5 +1,7 @@
 
 import { ArrowRight, Play, GitBranch, Monitor } from "lucide-react";
+import DemoHeader from "./DemoHeader";
+import DemoFooter from "./DemoFooter";
 import FullDocumentEditor from "./FullDocumentEditor";
 import VideoSection from "./VideoSection";
 import FlowMapSection from "./FlowMapSection";
@@ -7,6 +9,8 @@ import FlowMapSection from "./FlowMapSection";
 const DemoPage = () => {
   return (
     <div className="min-h-screen bg-[#0e1015] text-foreground">
+      <DemoHeader />
+      
       {/* Hero Section */}
       <div className="max-w-7xl mx-auto px-6 py-20">
         <div className="text-center mb-16">
@@ -55,15 +59,13 @@ const DemoPage = () => {
                 </div>
               </div>
               
-              {/* Contract Editor - Scaled Down */}
-              <div className="h-[600px] overflow-hidden">
-                <div className="transform scale-90 origin-top-left w-[111%] h-[111%]">
-                  <FullDocumentEditor 
-                    showInlineHighlights={true}
-                    trackChanges={false}
-                    comparisonMode="template"
-                  />
-                </div>
+              {/* Contract Editor - Full Size */}
+              <div className="h-[800px] overflow-hidden">
+                <FullDocumentEditor 
+                  showInlineHighlights={true}
+                  trackChanges={false}
+                  comparisonMode="template"
+                />
               </div>
             </div>
           </div>
@@ -75,6 +77,8 @@ const DemoPage = () => {
         {/* Section 3: Flow Map */}
         <FlowMapSection />
       </div>
+
+      <DemoFooter />
     </div>
   );
 };
