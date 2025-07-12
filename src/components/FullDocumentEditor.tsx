@@ -135,9 +135,9 @@ const FullDocumentEditor = ({ showInlineHighlights, trackChanges, comparisonMode
   };
 
   return (
-    <div className="h-full flex bg-[#0e1015] text-white">
+    <div className="h-full flex bg-[#0e1015] text-white overflow-hidden">
       {/* Main Document Area */}
-      <div className="flex-1 flex flex-col">
+      <div className="flex-1 flex flex-col min-w-0">
         <DocumentToolbar 
           documentMode={documentMode}
           setDocumentMode={setDocumentMode}
@@ -149,24 +149,24 @@ const FullDocumentEditor = ({ showInlineHighlights, trackChanges, comparisonMode
         />
 
         {/* Mode Toggle */}
-        <div className="px-8 py-4 border-b border-gray-800 flex justify-end">
+        <div className="px-4 lg:px-8 py-3 border-b border-gray-800 flex justify-end">
           <div className="flex items-center space-x-3">
-            <span className="text-sm text-gray-400">Review Mode</span>
+            <span className="text-xs lg:text-sm text-gray-400">Review Mode</span>
             <Switch 
               checked={isEditMode}
               onCheckedChange={setIsEditMode}
             />
-            <span className="text-sm text-gray-400">Edit Mode</span>
+            <span className="text-xs lg:text-sm text-gray-400">Edit Mode</span>
           </div>
         </div>
 
         {/* Scrollable Document Content with Custom Scrollbar */}
         <div className="flex-1 overflow-y-auto custom-scrollbar">
-          <div className="max-w-4xl mx-auto p-8 space-y-6">
+          <div className="max-w-none lg:max-w-4xl mx-auto p-4 lg:p-8 space-y-4 lg:space-y-6">
             {contractClauses.map((clause) => (
               <div
                 key={clause.id}
-                className={`group transition-all duration-200 hover:scale-[1.01] hover:shadow-lg p-6 rounded-lg border-l-4 cursor-pointer ${
+                className={`group transition-all duration-200 hover:scale-[1.01] hover:shadow-lg p-3 lg:p-6 rounded-lg border-l-4 cursor-pointer ${
                   clause.riskLevel === 'high' ? 'bg-red-500/10 border-red-500' :
                   clause.riskLevel === 'medium' ? 'bg-yellow-500/10 border-yellow-500' :
                   'bg-green-500/10 border-green-500'
@@ -175,19 +175,19 @@ const FullDocumentEditor = ({ showInlineHighlights, trackChanges, comparisonMode
                 onMouseLeave={() => setHoveredClause(null)}
                 onClick={() => handleClauseClick(clause.id)}
               >
-                <div className="flex items-center justify-between mb-4">
-                  <h2 className="text-xl font-semibold text-white">
+                <div className="flex items-center justify-between mb-3 lg:mb-4">
+                  <h2 className="text-lg lg:text-xl font-semibold text-white">
                     {clause.section}. {clause.title}
                   </h2>
                 </div>
 
-                <div className="prose prose-sm max-w-none text-gray-300 leading-relaxed">
+                <div className="prose prose-sm max-w-none text-gray-300 leading-relaxed text-sm lg:text-base">
                   {clause.content}
                 </div>
 
                 {/* AI Note Display */}
                 {clause.aiNote && (
-                  <div className={`mt-3 p-3 rounded-lg border-l-4 ${
+                  <div className={`mt-3 p-2 lg:p-3 rounded-lg border-l-4 ${
                     clause.riskLevel === 'high' ? 'bg-red-500/10 border-red-500' :
                     clause.riskLevel === 'medium' ? 'bg-yellow-500/10 border-yellow-500' :
                     'bg-green-500/10 border-green-500'
@@ -199,10 +199,10 @@ const FullDocumentEditor = ({ showInlineHighlights, trackChanges, comparisonMode
                         'bg-green-500'
                       }`}></div>
                       <div>
-                        <span className="text-sm font-medium text-gray-300">
+                        <span className="text-xs lg:text-sm font-medium text-gray-300">
                           {clause.riskLevel === 'high' ? 'AI Risk: ' : 'AI Note: '}
                         </span>
-                        <span className="text-sm text-gray-400 italic">
+                        <span className="text-xs lg:text-sm text-gray-400 italic">
                           {clause.aiNote}
                         </span>
                       </div>
@@ -215,11 +215,13 @@ const FullDocumentEditor = ({ showInlineHighlights, trackChanges, comparisonMode
         </div>
       </div>
 
-      {/* Contract Analysis Sidebar */}
-      <ContractSidebar contractScore={contractScore} />
+      {/* Contract Analysis Sidebar - Responsive Width */}
+      <div className="w-48 lg:w-64 xl:w-80 border-l border-gray-800 bg-[#0e1015] flex-shrink-0">
+        <ContractSidebar contractScore={contractScore} />
+      </div>
 
-      {/* Clause Intelligence Panel */}
-      <div className="w-80 border-l border-gray-800 bg-[#0e1015]">
+      {/* Clause Intelligence Panel - Responsive Width */}
+      <div className="w-48 lg:w-64 xl:w-80 border-l border-gray-800 bg-[#0e1015] flex-shrink-0">
         <ClauseIntelligencePanel 
           selectedClause={selectedClause}
           activeTab={activeIntelligenceTab}

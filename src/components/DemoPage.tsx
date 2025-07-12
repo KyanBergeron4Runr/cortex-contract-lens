@@ -27,8 +27,8 @@ const DemoPage = () => {
           </div>
         </div>
 
-        {/* Section 1: Interactive Contract Analysis in Fake Browser */}
-        <section className="mb-32">
+        {/* Section 1: Interactive Contract Analysis in Fake Browser - Hidden on Mobile */}
+        <section className="mb-32 hidden md:block">
           <div className="text-center mb-12">
             <div className="flex items-center justify-center mb-4">
               <Monitor className="w-8 h-8 mr-3 text-primary" />
@@ -42,7 +42,7 @@ const DemoPage = () => {
             </p>
           </div>
           
-          {/* Fake Browser Frame */}
+          {/* Fake Browser Frame - Responsive Sizing */}
           <div className="bg-gradient-to-r from-primary/20 to-primary/10 rounded-2xl p-1">
             <div className="bg-card/40 backdrop-blur-sm rounded-xl overflow-hidden shadow-2xl">
               {/* Browser Header */}
@@ -59,14 +59,36 @@ const DemoPage = () => {
                 </div>
               </div>
               
-              {/* Contract Editor - Full Size */}
-              <div className="h-[800px] overflow-hidden">
-                <FullDocumentEditor 
-                  showInlineHighlights={true}
-                  trackChanges={false}
-                  comparisonMode="template"
-                />
+              {/* Contract Editor - Responsive Height and Full Visibility */}
+              <div className="h-[600px] md:h-[800px] lg:h-[900px] xl:h-[1000px] 2xl:h-[1100px] overflow-hidden">
+                <div className="h-full w-full">
+                  <FullDocumentEditor 
+                    showInlineHighlights={true}
+                    trackChanges={false}
+                    comparisonMode="template"
+                  />
+                </div>
               </div>
+            </div>
+          </div>
+        </section>
+
+        {/* Mobile Notice - Only shown on mobile */}
+        <section className="mb-32 md:hidden">
+          <div className="text-center">
+            <div className="flex items-center justify-center mb-4">
+              <Monitor className="w-8 h-8 mr-3 text-primary" />
+              <h2 className="text-3xl font-semibold text-foreground">
+                Interactive Contract Analysis
+              </h2>
+            </div>
+            <div className="bg-muted/20 rounded-lg p-8 border border-border/30">
+              <p className="text-lg text-muted-foreground mb-4">
+                The interactive contract analysis demo is best experienced on desktop or tablet devices.
+              </p>
+              <p className="text-sm text-muted-foreground">
+                Please visit this page on a larger screen to interact with our full-featured contract editor.
+              </p>
             </div>
           </div>
         </section>
