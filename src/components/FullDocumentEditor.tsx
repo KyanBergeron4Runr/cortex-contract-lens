@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { Switch } from "@/components/ui/switch";
 import DocumentToolbar from "./DocumentToolbar";
@@ -128,7 +129,7 @@ const FullDocumentEditor = ({ showInlineHighlights, trackChanges, comparisonMode
   };
 
   return (
-    <div className="h-full flex bg-background">
+    <div className="h-full flex bg-[#0e1015] text-white">
       {/* Main Document Area */}
       <div className="flex-1 flex flex-col">
         <DocumentToolbar 
@@ -142,38 +143,65 @@ const FullDocumentEditor = ({ showInlineHighlights, trackChanges, comparisonMode
         />
 
         {/* Mode Toggle */}
-        <div className="px-8 py-4 border-b border-border/50 flex justify-end">
+        <div className="px-8 py-4 border-b border-gray-800 flex justify-end">
           <div className="flex items-center space-x-3">
-            <span className="text-sm text-muted-foreground">Review Mode</span>
+            <span className="text-sm text-gray-400">Review Mode</span>
             <Switch 
               checked={isEditMode}
               onCheckedChange={setIsEditMode}
             />
-            <span className="text-sm text-muted-foreground">Edit Mode</span>
+            <span className="text-sm text-gray-400">Edit Mode</span>
           </div>
         </div>
 
         {/* Scrollable Document Content with Custom Scrollbar */}
         <div className="flex-1 overflow-y-auto custom-scrollbar">
-          <div className="max-w-4xl mx-auto p-8 space-y-8">
+          <div className="max-w-4xl mx-auto p-8 space-y-6">
             {contractClauses.map((clause) => (
               <div
                 key={clause.id}
-                className="group transition-all duration-200 hover:scale-[1.01] hover:shadow-lg"
+                className={`group transition-all duration-200 hover:scale-[1.01] hover:shadow-lg p-6 rounded-lg border-l-4 ${
+                  clause.riskLevel === 'high' ? 'bg-red-500/10 border-red-500' :
+                  clause.riskLevel === 'medium' ? 'bg-yellow-500/10 border-yellow-500' :
+                  'bg-green-500/10 border-green-500'
+                }`}
+                onMouseEnter={() => setHoveredClause(clause.id)}
+                onMouseLeave={() => setHoveredClause(null)}
               >
-                <ContractClauseComponent
-                  clause={clause}
-                  hoveredClause={hoveredClause}
-                  setHoveredClause={setHoveredClause}
-                  showInlineHighlights={showInlineHighlights}
-                  trackChanges={trackChanges}
-                  documentMode={documentMode}
-                  onEdit={handleInlineEdit}
-                  onAcceptSuggestion={handleAcceptSuggestion}
-                  onAcceptChange={handleAcceptChange}
-                  onRejectChange={handleRejectChange}
-                  onViewReasoning={setEditingClause}
-                />
+                <div className="flex items-center justify-between mb-4">
+                  <h2 className="text-xl font-semibold text-white">
+                    {clause.section}. {clause.title}
+                  </h2>
+                </div>
+
+                <div className="prose prose-sm max-w-none text-gray-300 leading-relaxed">
+                  {clause.content}
+                </div>
+
+                {/* AI Note Display */}
+                {clause.aiNote && (
+                  <div className={`mt-3 p-3 rounded-lg border-l-4 ${
+                    clause.riskLevel === 'high' ? 'bg-red-500/10 border-red-500' :
+                    clause.riskLevel === 'medium' ? 'bg-yellow-500/10 border-yellow-500' :
+                    'bg-green-500/10 border-green-500'
+                  }`}>
+                    <div className="flex items-start space-x-2">
+                      <div className={`w-2 h-2 rounded-full mt-1 ${
+                        clause.riskLevel === 'high' ? 'bg-red-500' :
+                        clause.riskLevel === 'medium' ? 'bg-yellow-500' :
+                        'bg-green-500'
+                      }`}></div>
+                      <div>
+                        <span className="text-sm font-medium text-gray-300">
+                          {clause.riskLevel === 'high' ? 'AI Risk: ' : 'AI Note: '}
+                        </span>
+                        <span className="text-sm text-gray-400 italic">
+                          {clause.aiNote}
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                )}
               </div>
             ))}
           </div>
