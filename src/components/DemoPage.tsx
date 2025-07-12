@@ -12,7 +12,7 @@ const DemoPage = () => {
       <DemoHeader />
       
       {/* Hero Section */}
-      <div className="max-w-7xl mx-auto px-6 py-20">
+      <div className="max-w-full mx-auto px-6 py-20">
         <div className="text-center mb-16">
           <h1 className="text-5xl font-bold mb-6 bg-gradient-to-r from-primary to-primary/80 bg-clip-text text-transparent">
             4Runr Cortex Demo
@@ -28,7 +28,7 @@ const DemoPage = () => {
         </div>
 
         {/* Section 1: Interactive Contract Analysis in Fake Browser - Hidden on Mobile */}
-        <section className="mb-32 hidden md:block">
+        <section className="mb-32 hidden lg:block">
           <div className="text-center mb-12">
             <div className="flex items-center justify-center mb-4">
               <Monitor className="w-8 h-8 mr-3 text-primary" />
@@ -42,25 +42,25 @@ const DemoPage = () => {
             </p>
           </div>
           
-          {/* Fake Browser Frame - Responsive Sizing */}
-          <div className="bg-gradient-to-r from-primary/20 to-primary/10 rounded-2xl p-1">
+          {/* Fake Browser Frame - Much Bigger */}
+          <div className="bg-gradient-to-r from-primary/20 to-primary/10 rounded-2xl p-1 max-w-[95vw] mx-auto">
             <div className="bg-card/40 backdrop-blur-sm rounded-xl overflow-hidden shadow-2xl">
               {/* Browser Header */}
-              <div className="bg-muted/50 px-4 py-3 flex items-center space-x-2 border-b border-border/30">
-                <div className="flex space-x-2">
-                  <div className="w-3 h-3 bg-red-500 rounded-full"></div>
-                  <div className="w-3 h-3 bg-yellow-500 rounded-full"></div>
-                  <div className="w-3 h-3 bg-green-500 rounded-full"></div>
+              <div className="bg-muted/50 px-6 py-4 flex items-center space-x-3 border-b border-border/30">
+                <div className="flex space-x-3">
+                  <div className="w-4 h-4 bg-red-500 rounded-full"></div>
+                  <div className="w-4 h-4 bg-yellow-500 rounded-full"></div>
+                  <div className="w-4 h-4 bg-green-500 rounded-full"></div>
                 </div>
-                <div className="flex-1 mx-4">
-                  <div className="bg-background/50 rounded px-3 py-1 text-sm text-muted-foreground">
+                <div className="flex-1 mx-6">
+                  <div className="bg-background/50 rounded px-4 py-2 text-sm text-muted-foreground">
                     https://cortex.4runr.com/contract-analysis
                   </div>
                 </div>
               </div>
               
-              {/* Contract Editor - Responsive Height and Full Visibility */}
-              <div className="h-[600px] md:h-[800px] lg:h-[900px] xl:h-[1000px] 2xl:h-[1100px] overflow-hidden">
+              {/* Contract Editor - Much Bigger Height */}
+              <div className="h-[1200px] xl:h-[1400px] 2xl:h-[1600px] overflow-hidden">
                 <div className="h-full w-full">
                   <FullDocumentEditor 
                     showInlineHighlights={true}
@@ -73,8 +73,8 @@ const DemoPage = () => {
           </div>
         </section>
 
-        {/* Mobile Notice - Only shown on mobile */}
-        <section className="mb-32 md:hidden">
+        {/* Mobile Notice - Only shown on mobile and tablet */}
+        <section className="mb-32 lg:hidden">
           <div className="text-center">
             <div className="flex items-center justify-center mb-4">
               <Monitor className="w-8 h-8 mr-3 text-primary" />
@@ -84,7 +84,7 @@ const DemoPage = () => {
             </div>
             <div className="bg-muted/20 rounded-lg p-8 border border-border/30">
               <p className="text-lg text-muted-foreground mb-4">
-                The interactive contract analysis demo is best experienced on desktop or tablet devices.
+                The interactive contract analysis demo is best experienced on desktop devices.
               </p>
               <p className="text-sm text-muted-foreground">
                 Please visit this page on a larger screen to interact with our full-featured contract editor.
