@@ -3,10 +3,10 @@ import { Button } from "@/components/ui/button";
 
 const DemoHeader = () => {
   const navItems = [
-    { name: "Home", url: "/" },
-    { name: "Services", url: "/ai-infrastructure-automation-services" },
-    { name: "About Us", url: "/about" },
-    { name: "Contact Us", url: "/contact" }
+    { name: "Home", url: "https://4runrtech.com/" },
+    { name: "Services", url: "https://4runrtech.com/ai-infrastructure-automation-services" },
+    { name: "About Us", url: "https://4runrtech.com/about" },
+    { name: "Contact Us", url: "https://4runrtech.com/contact" }
   ];
 
   return (
@@ -25,6 +25,8 @@ const DemoHeader = () => {
               <a
                 key={item.name}
                 href={item.url}
+                target="_blank"
+                rel="noopener noreferrer"
                 className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors duration-200"
               >
                 {item.name}
