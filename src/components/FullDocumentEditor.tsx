@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Switch } from "@/components/ui/switch";
 import DocumentToolbar from "./DocumentToolbar";
@@ -6,6 +5,7 @@ import DocumentHeader from "./DocumentHeader";
 import ContractClauseComponent from "./ContractClause";
 import ContractSidebar from "./ContractSidebar";
 import ClauseEditDrawer from "./ClauseEditDrawer";
+import ClauseIntelligencePanel from "./ClauseIntelligencePanel";
 
 interface ContractClause {
   id: number;
@@ -29,9 +29,11 @@ interface FullDocumentEditorProps {
 const FullDocumentEditor = ({ showInlineHighlights, trackChanges, comparisonMode }: FullDocumentEditorProps) => {
   const [editingClause, setEditingClause] = useState<number | null>(null);
   const [hoveredClause, setHoveredClause] = useState<number | null>(null);
+  const [selectedClause, setSelectedClause] = useState<number | null>(null);
   const [documentMode, setDocumentMode] = useState<'view' | 'suggest' | 'compare'>('view');
   const [contractScore, setContractScore] = useState(72);
   const [isEditMode, setIsEditMode] = useState(false);
+  const [activeIntelligenceTab, setActiveIntelligenceTab] = useState<'chat' | 'comparison' | 'memory'>('chat');
   
   const contractClauses: ContractClause[] = [
     {
@@ -128,6 +130,10 @@ const FullDocumentEditor = ({ showInlineHighlights, trackChanges, comparisonMode
     return contractClauses.find(clause => clause.id === id);
   };
 
+  const handleClauseClick = (clauseId: number) => {
+    setSelectedClause(clauseId);
+  };
+
   return (
     <div className="h-full flex bg-[#0e1015] text-white">
       {/* Main Document Area */}
@@ -160,13 +166,14 @@ const FullDocumentEditor = ({ showInlineHighlights, trackChanges, comparisonMode
             {contractClauses.map((clause) => (
               <div
                 key={clause.id}
-                className={`group transition-all duration-200 hover:scale-[1.01] hover:shadow-lg p-6 rounded-lg border-l-4 ${
+                className={`group transition-all duration-200 hover:scale-[1.01] hover:shadow-lg p-6 rounded-lg border-l-4 cursor-pointer ${
                   clause.riskLevel === 'high' ? 'bg-red-500/10 border-red-500' :
                   clause.riskLevel === 'medium' ? 'bg-yellow-500/10 border-yellow-500' :
                   'bg-green-500/10 border-green-500'
-                }`}
+                } ${selectedClause === clause.id ? 'ring-2 ring-primary/30' : ''}`}
                 onMouseEnter={() => setHoveredClause(clause.id)}
                 onMouseLeave={() => setHoveredClause(null)}
+                onClick={() => handleClauseClick(clause.id)}
               >
                 <div className="flex items-center justify-between mb-4">
                   <h2 className="text-xl font-semibold text-white">
@@ -208,7 +215,17 @@ const FullDocumentEditor = ({ showInlineHighlights, trackChanges, comparisonMode
         </div>
       </div>
 
+      {/* Contract Analysis Sidebar */}
       <ContractSidebar contractScore={contractScore} />
+
+      {/* Clause Intelligence Panel */}
+      <div className="w-80 border-l border-gray-800 bg-[#0e1015]">
+        <ClauseIntelligencePanel 
+          selectedClause={selectedClause}
+          activeTab={activeIntelligenceTab}
+          onTabChange={setActiveIntelligenceTab}
+        />
+      </div>
 
       {/* Clause Edit Drawer */}
       {editingClause && (
