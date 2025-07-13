@@ -8,7 +8,8 @@ import {
   Edit, Eye, FileText, GitCompare, Bold, Italic, Underline, 
   Undo, Redo, MessageSquare, Save, Lock, Brain, BarChart3,
   AlertTriangle, Users, Clock, CheckCircle, XCircle, Star,
-  MessageCircle, BookOpen, Zap, TrendingUp, Activity
+  MessageCircle, BookOpen, Zap, TrendingUp, Activity,
+  Copy, RefreshCw
 } from "lucide-react";
 import { 
   DropdownMenu,
@@ -17,6 +18,13 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import {
+  ContextMenu,
+  ContextMenuContent,
+  ContextMenuItem,
+  ContextMenuTrigger,
+  ContextMenuSeparator
+} from "@/components/ui/context-menu";
 
 interface ContractClause {
   id: number;
@@ -121,24 +129,29 @@ const FullDocumentEditor = ({ showInlineHighlights, trackChanges, comparisonMode
     setSelectedClause(selectedClause === clauseId ? null : clauseId);
   };
 
+  const handleContextMenuAction = (action: string, clauseId: number) => {
+    console.log(`Context menu action: ${action} for clause ${clauseId}`);
+    // Handle context menu actions here
+  };
+
   return (
     <div className="h-full flex bg-[#0e1015] text-white overflow-hidden">
       {/* Main Document Area */}
       <div className="flex-1 flex flex-col min-w-0">
         {/* Document Toolbar */}
-        <div className="border-b border-gray-800 bg-[#0e1015] p-4 flex items-center justify-between sticky top-0 z-20">
-          <div className="flex items-center space-x-2">
+        <div className="border-b border-gray-800 bg-[#0e1015] p-2 xl:p-4 flex items-center justify-between sticky top-0 z-20">
+          <div className="flex items-center space-x-1 xl:space-x-2">
             {/* Mode Selector */}
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button variant="outline" size="sm" className="flex items-center space-x-2 border-gray-700 text-gray-300 hover:bg-gray-800">
-                  {documentMode === 'view' && <Eye className="w-4 h-4" />}
-                  {documentMode === 'suggest' && <FileText className="w-4 h-4" />}
-                  {documentMode === 'compare' && <GitCompare className="w-4 h-4" />}
-                  <span className="capitalize">{documentMode} Mode</span>
+                <Button variant="outline" size="sm" className="flex items-center space-x-1 xl:space-x-2 border-gray-700 text-gray-300 hover:bg-gray-800 text-xs xl:text-sm px-2 xl:px-3">
+                  {documentMode === 'view' && <Eye className="w-3 h-3 xl:w-4 xl:h-4" />}
+                  {documentMode === 'suggest' && <FileText className="w-3 h-3 xl:w-4 xl:h-4" />}
+                  {documentMode === 'compare' && <GitCompare className="w-3 h-3 xl:w-4 xl:h-4" />}
+                  <span className="capitalize hidden sm:inline">{documentMode} Mode</span>
                 </Button>
               </DropdownMenuTrigger>
-              <DropdownMenuContent className="bg-gray-900 border-gray-700">
+              <DropdownMenuContent className="bg-gray-900 border-gray-700 z-50">
                 <DropdownMenuItem onClick={() => setDocumentMode('view')} className="text-gray-300 hover:bg-gray-800">
                   <Eye className="w-4 h-4 mr-2" />
                   View Mode
@@ -154,57 +167,57 @@ const FullDocumentEditor = ({ showInlineHighlights, trackChanges, comparisonMode
               </DropdownMenuContent>
             </DropdownMenu>
 
-            <div className="w-px h-6 bg-gray-700 mx-2" />
+            <div className="w-px h-4 xl:h-6 bg-gray-700 mx-1 xl:mx-2" />
 
             {/* Text Formatting */}
-            <Button variant="ghost" size="sm" className="text-gray-400 hover:text-white hover:bg-gray-800">
-              <Bold className="w-4 h-4" />
+            <Button variant="ghost" size="sm" className="text-gray-400 hover:text-white hover:bg-gray-800 p-1 xl:p-2">
+              <Bold className="w-3 h-3 xl:w-4 xl:h-4" />
             </Button>
-            <Button variant="ghost" size="sm" className="text-gray-400 hover:text-white hover:bg-gray-800">
-              <Italic className="w-4 h-4" />
+            <Button variant="ghost" size="sm" className="text-gray-400 hover:text-white hover:bg-gray-800 p-1 xl:p-2">
+              <Italic className="w-3 h-3 xl:w-4 xl:h-4" />
             </Button>
-            <Button variant="ghost" size="sm" className="text-gray-400 hover:text-white hover:bg-gray-800">
-              <Underline className="w-4 h-4" />
+            <Button variant="ghost" size="sm" className="text-gray-400 hover:text-white hover:bg-gray-800 p-1 xl:p-2">
+              <Underline className="w-3 h-3 xl:w-4 xl:h-4" />
             </Button>
 
-            <div className="w-px h-6 bg-gray-700 mx-2" />
+            <div className="w-px h-4 xl:h-6 bg-gray-700 mx-1 xl:mx-2" />
 
             {/* History */}
-            <Button variant="ghost" size="sm" className="text-gray-400 hover:text-white hover:bg-gray-800">
-              <Undo className="w-4 h-4" />
+            <Button variant="ghost" size="sm" className="text-gray-400 hover:text-white hover:bg-gray-800 p-1 xl:p-2">
+              <Undo className="w-3 h-3 xl:w-4 xl:h-4" />
             </Button>
-            <Button variant="ghost" size="sm" className="text-gray-400 hover:text-white hover:bg-gray-800">
-              <Redo className="w-4 h-4" />
+            <Button variant="ghost" size="sm" className="text-gray-400 hover:text-white hover:bg-gray-800 p-1 xl:p-2">
+              <Redo className="w-3 h-3 xl:w-4 xl:h-4" />
             </Button>
 
-            <div className="w-px h-6 bg-gray-700 mx-2" />
+            <div className="w-px h-4 xl:h-6 bg-gray-700 mx-1 xl:mx-2" />
 
             {/* Comment */}
-            <Button variant="ghost" size="sm" className="text-gray-400 hover:text-white hover:bg-gray-800">
-              <MessageSquare className="w-4 h-4" />
+            <Button variant="ghost" size="sm" className="text-gray-400 hover:text-white hover:bg-gray-800 p-1 xl:p-2">
+              <MessageSquare className="w-3 h-3 xl:w-4 xl:h-4" />
             </Button>
           </div>
 
-          <div className="flex items-center space-x-2">
-            <Button variant="outline" size="sm" className="border-gray-700 text-gray-300 hover:bg-gray-800">
-              <Save className="w-4 h-4 mr-2" />
-              Save Draft
+          <div className="flex items-center space-x-1 xl:space-x-2">
+            <Button variant="outline" size="sm" className="border-gray-700 text-gray-300 hover:bg-gray-800 text-xs xl:text-sm px-2 xl:px-3">
+              <Save className="w-3 h-3 xl:w-4 xl:h-4 mr-1 xl:mr-2" />
+              <span className="hidden sm:inline">Save Draft</span>
             </Button>
-            <Button size="sm" className="bg-gradient-to-r from-purple-600 to-purple-700 text-white hover:from-purple-700 hover:to-purple-800">
-              <Lock className="w-4 h-4 mr-2" />
-              Finalize Document
+            <Button size="sm" className="bg-gradient-to-r from-purple-600 to-purple-700 text-white hover:from-purple-700 hover:to-purple-800 text-xs xl:text-sm px-2 xl:px-3">
+              <Lock className="w-3 h-3 xl:w-4 xl:h-4 mr-1 xl:mr-2" />
+              <span className="hidden sm:inline">Finalize</span>
             </Button>
           </div>
         </div>
 
         {/* Document Header */}
-        <div className="p-8 pb-4 border-b border-gray-800">
+        <div className="p-4 xl:p-8 pb-2 xl:pb-4 border-b border-gray-800">
           <div className="max-w-4xl mx-auto text-center">
-            <h1 className="text-3xl font-bold text-white mb-3">SOFTWARE DEVELOPMENT SERVICES AGREEMENT</h1>
-            <p className="text-lg text-gray-300 mb-2">ABC Corporation & XYZ Services LLC</p>
-            <p className="text-sm text-gray-400">Effective Date: January 15, 2024 • Draft v2.1</p>
+            <h1 className="text-xl xl:text-3xl font-bold text-white mb-2 xl:mb-3">SOFTWARE DEVELOPMENT SERVICES AGREEMENT</h1>
+            <p className="text-sm xl:text-lg text-gray-300 mb-1 xl:mb-2">ABC Corporation & XYZ Services LLC</p>
+            <p className="text-xs xl:text-sm text-gray-400">Effective Date: January 15, 2024 • Draft v2.1</p>
             {trackChanges && (
-              <Badge variant="outline" className="mt-3 border-purple-500 text-purple-300">
+              <Badge variant="outline" className="mt-2 xl:mt-3 border-purple-500 text-purple-300 text-xs">
                 Track Changes: ON • Comparing to {comparisonMode === 'template' ? 'Firm Template' : comparisonMode === 'lastVersion' ? 'Last Version' : 'Industry Average'}
               </Badge>
             )}
@@ -212,74 +225,122 @@ const FullDocumentEditor = ({ showInlineHighlights, trackChanges, comparisonMode
         </div>
 
         {/* Mode Toggle */}
-        <div className="px-8 py-3 border-b border-gray-800 flex justify-end">
-          <div className="flex items-center space-x-3">
-            <span className="text-sm text-gray-400">Review Mode</span>
+        <div className="px-4 xl:px-8 py-2 xl:py-3 border-b border-gray-800 flex justify-end">
+          <div className="flex items-center space-x-2 xl:space-x-3">
+            <span className="text-xs xl:text-sm text-gray-400">Review Mode</span>
             <Switch 
               checked={isEditMode}
               onCheckedChange={setIsEditMode}
             />
-            <span className="text-sm text-gray-400">Edit Mode</span>
+            <span className="text-xs xl:text-sm text-gray-400">Edit Mode</span>
           </div>
         </div>
 
         {/* Scrollable Document Content */}
         <div className="flex-1 overflow-y-auto custom-scrollbar">
-          <div className="max-w-4xl mx-auto p-8 space-y-6">
+          <div className="max-w-4xl mx-auto p-4 xl:p-8 space-y-4 xl:space-y-6">
             {contractClauses.map((clause) => (
-              <div
-                key={clause.id}
-                className={`group transition-all duration-200 hover:scale-[1.01] hover:shadow-lg p-6 rounded-lg border-l-4 cursor-pointer ${
-                  clause.riskLevel === 'high' ? 'bg-red-500/10 border-red-500' :
-                  clause.riskLevel === 'medium' ? 'bg-yellow-500/10 border-yellow-500' :
-                  'bg-green-500/10 border-green-500'
-                } ${selectedClause === clause.id ? 'ring-2 ring-primary/30' : ''}`}
-                onClick={() => handleClauseClick(clause.id)}
-              >
-                <div className="flex items-center justify-between mb-4">
-                  <h2 className="text-xl font-semibold text-white">
-                    {clause.section}. {clause.title}
-                  </h2>
-                </div>
-
-                <div className="prose prose-sm max-w-none text-gray-300 leading-relaxed">
-                  {clause.content}
-                </div>
-
-                {/* AI Note Display */}
-                {clause.aiNote && (
-                  <div className={`mt-3 p-3 rounded-lg border-l-4 ${
-                    clause.riskLevel === 'high' ? 'bg-red-500/10 border-red-500' :
-                    clause.riskLevel === 'medium' ? 'bg-yellow-500/10 border-yellow-500' :
-                    'bg-green-500/10 border-green-500'
-                  }`}>
-                    <div className="flex items-start space-x-2">
-                      <div className={`w-2 h-2 rounded-full mt-1 ${
-                        clause.riskLevel === 'high' ? 'bg-red-500' :
-                        clause.riskLevel === 'medium' ? 'bg-yellow-500' :
-                        'bg-green-500'
-                      }`}></div>
-                      <div>
-                        <span className="text-sm font-medium text-gray-300">
-                          {clause.riskLevel === 'high' ? 'AI Risk: ' : 'AI Note: '}
-                        </span>
-                        <span className="text-sm text-gray-400 italic">
-                          {clause.aiNote}
-                        </span>
-                      </div>
+              <ContextMenu key={clause.id}>
+                <ContextMenuTrigger>
+                  <div
+                    className={`group transition-all duration-200 hover:scale-[1.01] hover:shadow-lg p-3 xl:p-6 rounded-lg border-l-4 cursor-pointer ${
+                      clause.riskLevel === 'high' ? 'bg-red-500/10 border-red-500' :
+                      clause.riskLevel === 'medium' ? 'bg-yellow-500/10 border-yellow-500' :
+                      'bg-green-500/10 border-green-500'
+                    } ${selectedClause === clause.id ? 'ring-2 ring-primary/30' : ''}`}
+                    onClick={() => handleClauseClick(clause.id)}
+                  >
+                    <div className="flex items-center justify-between mb-2 xl:mb-4">
+                      <h2 className="text-lg xl:text-xl font-semibold text-white">
+                        {clause.section}. {clause.title}
+                      </h2>
                     </div>
+
+                    <div className="prose prose-sm max-w-none text-gray-300 leading-relaxed text-sm xl:text-base">
+                      {clause.content}
+                    </div>
+
+                    {/* AI Note Display */}
+                    {clause.aiNote && (
+                      <div className={`mt-2 xl:mt-3 p-2 xl:p-3 rounded-lg border-l-4 ${
+                        clause.riskLevel === 'high' ? 'bg-red-500/10 border-red-500' :
+                        clause.riskLevel === 'medium' ? 'bg-yellow-500/10 border-yellow-500' :
+                        'bg-green-500/10 border-green-500'
+                      }`}>
+                        <div className="flex items-start space-x-2">
+                          <div className={`w-2 h-2 rounded-full mt-1 ${
+                            clause.riskLevel === 'high' ? 'bg-red-500' :
+                            clause.riskLevel === 'medium' ? 'bg-yellow-500' :
+                            'bg-green-500'
+                          }`}></div>
+                          <div>
+                            <span className="text-xs xl:text-sm font-medium text-gray-300">
+                              {clause.riskLevel === 'high' ? 'AI Risk: ' : 'AI Note: '}
+                            </span>
+                            <span className="text-xs xl:text-sm text-gray-400 italic">
+                              {clause.aiNote}
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+                    )}
                   </div>
-                )}
-              </div>
+                </ContextMenuTrigger>
+                
+                <ContextMenuContent className="bg-gray-900 border-gray-700 z-50">
+                  <ContextMenuItem onClick={() => handleContextMenuAction('edit', clause.id)} className="text-gray-300 hover:bg-gray-800">
+                    <Edit className="w-4 h-4 mr-2" />
+                    Edit Clause
+                  </ContextMenuItem>
+                  <ContextMenuItem onClick={() => handleContextMenuAction('copy', clause.id)} className="text-gray-300 hover:bg-gray-800">
+                    <Copy className="w-4 h-4 mr-2" />
+                    Copy Text
+                  </ContextMenuItem>
+                  {clause.suggested && (
+                    <ContextMenuItem onClick={() => handleContextMenuAction('accept', clause.id)} className="text-gray-300 hover:bg-gray-800">
+                      <RefreshCw className="w-4 h-4 mr-2" />
+                      Accept AI Suggestion
+                    </ContextMenuItem>
+                  )}
+                  <ContextMenuItem onClick={() => handleContextMenuAction('compare', clause.id)} className="text-gray-300 hover:bg-gray-800">
+                    <GitCompare className="w-4 h-4 mr-2" />
+                    Compare to Template
+                  </ContextMenuItem>
+                  {clause.reasoning && (
+                    <ContextMenuItem onClick={() => handleContextMenuAction('reasoning', clause.id)} className="text-gray-300 hover:bg-gray-800">
+                      <Brain className="w-4 h-4 mr-2" />
+                      View AI Reasoning
+                    </ContextMenuItem>
+                  )}
+                  <ContextMenuSeparator />
+                  <ContextMenuItem onClick={() => handleContextMenuAction('comment', clause.id)} className="text-gray-300 hover:bg-gray-800">
+                    <MessageSquare className="w-4 h-4 mr-2" />
+                    Add Comment
+                  </ContextMenuItem>
+                  {trackChanges && clause.hasChanges && (
+                    <>
+                      <ContextMenuSeparator />
+                      <ContextMenuItem onClick={() => handleContextMenuAction('acceptChange', clause.id)} className="text-gray-300 hover:bg-gray-800">
+                        <CheckCircle className="w-4 h-4 mr-2" />
+                        Accept Change
+                      </ContextMenuItem>
+                      <ContextMenuItem onClick={() => handleContextMenuAction('rejectChange', clause.id)} className="text-gray-300 hover:bg-gray-800">
+                        <XCircle className="w-4 h-4 mr-2" />
+                        Reject Change
+                      </ContextMenuItem>
+                    </>
+                  )}
+                </ContextMenuContent>
+              </ContextMenu>
             ))}
           </div>
         </div>
       </div>
 
       {/* Contract Analysis Sidebar */}
-      <div className="w-80 border-l border-gray-800 bg-[#0e1015] flex-shrink-0">
-        <div className="p-4 border-b border-gray-800">
-          <h3 className="font-semibold text-white mb-2">Contract Analysis</h3>
+      <div className="w-64 xl:w-80 border-l border-gray-800 bg-[#0e1015] flex-shrink-0 hidden lg:block">
+        <div className="p-3 xl:p-4 border-b border-gray-800">
+          <h3 className="font-semibold text-white mb-2 text-sm xl:text-base">Contract Analysis</h3>
           <div className="flex items-center space-x-2">
             <div className="flex-1 bg-gray-800 rounded-full h-2">
               <div 
@@ -287,47 +348,47 @@ const FullDocumentEditor = ({ showInlineHighlights, trackChanges, comparisonMode
                 style={{ width: `${contractScore}%` }}
               />
             </div>
-            <span className="text-sm font-medium text-white">{contractScore}%</span>
+            <span className="text-xs xl:text-sm font-medium text-white">{contractScore}%</span>
           </div>
         </div>
 
-        <div className="p-4 space-y-4">
+        <div className="p-3 xl:p-4 space-y-3 xl:space-y-4">
           <div className="space-y-2">
-            <div className="flex items-center justify-between text-sm">
+            <div className="flex items-center justify-between text-xs xl:text-sm">
               <span className="text-gray-400">High Risk Clauses</span>
               <span className="text-red-400 font-medium">2</span>
             </div>
-            <div className="flex items-center justify-between text-sm">
+            <div className="flex items-center justify-between text-xs xl:text-sm">
               <span className="text-gray-400">Medium Risk</span>
               <span className="text-yellow-400 font-medium">2</span>
             </div>
-            <div className="flex items-center justify-between text-sm">
+            <div className="flex items-center justify-between text-xs xl:text-sm">
               <span className="text-gray-400">Low Risk</span>
               <span className="text-green-400 font-medium">4</span>
             </div>
           </div>
 
-          <div className="pt-4 border-t border-gray-800">
-            <Button variant="outline" className="w-full justify-start border-gray-700 text-gray-300 hover:bg-gray-800">
-              <Brain className="w-4 h-4 mr-2" />
+          <div className="pt-3 xl:pt-4 border-t border-gray-800">
+            <Button variant="outline" className="w-full justify-start border-gray-700 text-gray-300 hover:bg-gray-800 text-xs xl:text-sm">
+              <Brain className="w-3 h-3 xl:w-4 xl:h-4 mr-2" />
               Ask AI about this section
             </Button>
           </div>
 
-          <div className="pt-4 space-y-2">
-            <h4 className="text-sm font-medium text-white">Key Risk Areas</h4>
+          <div className="pt-3 xl:pt-4 space-y-2">
+            <h4 className="text-xs xl:text-sm font-medium text-white">Key Risk Areas</h4>
             <div className="text-xs text-gray-300 space-y-2">
               <div className="p-2 bg-red-500/10 rounded border-l-2 border-red-500">
-                <div className="font-medium text-red-400">IP Rights Issue</div>
-                <div className="text-gray-400">Section 4: Contractor retains all IP</div>
+                <div className="font-medium text-red-400 text-xs">IP Rights Issue</div>
+                <div className="text-gray-400 text-xs">Section 4: Contractor retains all IP</div>
               </div>
               <div className="p-2 bg-red-500/10 rounded border-l-2 border-red-500">
-                <div className="font-medium text-red-400">Liability Imbalance</div>
-                <div className="text-gray-400">Section 7: One-sided limitations</div>
+                <div className="font-medium text-red-400 text-xs">Liability Imbalance</div>
+                <div className="text-gray-400 text-xs">Section 7: One-sided limitations</div>
               </div>
               <div className="p-2 bg-yellow-500/10 rounded border-l-2 border-yellow-500">
-                <div className="font-medium text-yellow-400">Payment Terms</div>
-                <div className="text-gray-400">Section 3: 45-day payment period</div>
+                <div className="font-medium text-yellow-400 text-xs">Payment Terms</div>
+                <div className="text-gray-400 text-xs">Section 3: 45-day payment period</div>
               </div>
             </div>
           </div>
@@ -335,12 +396,12 @@ const FullDocumentEditor = ({ showInlineHighlights, trackChanges, comparisonMode
       </div>
 
       {/* Clause Intelligence Panel */}
-      <div className="w-80 border-l border-gray-800 bg-[#0e1015] flex-shrink-0">
+      <div className="w-64 xl:w-80 border-l border-gray-800 bg-[#0e1015] flex-shrink-0 hidden xl:block">
         <div className="h-full flex flex-col">
-          <div className="p-4 border-b border-gray-800">
-            <h3 className="font-semibold text-white mb-2">Clause Intelligence</h3>
+          <div className="p-3 xl:p-4 border-b border-gray-800">
+            <h3 className="font-semibold text-white mb-2 text-sm xl:text-base">Clause Intelligence</h3>
             {selectedClause && (
-              <p className="text-sm text-gray-400">
+              <p className="text-xs xl:text-sm text-gray-400">
                 Analyzing Section {contractClauses.find(c => c.id === selectedClause)?.section}
               </p>
             )}
@@ -353,30 +414,30 @@ const FullDocumentEditor = ({ showInlineHighlights, trackChanges, comparisonMode
               <TabsTrigger value="memory" className="text-xs">Memory</TabsTrigger>
             </TabsList>
 
-            <TabsContent value="chat" className="flex-1 p-4 space-y-4">
+            <TabsContent value="chat" className="flex-1 p-3 xl:p-4 space-y-3 xl:space-y-4">
               <div className="space-y-3">
-                <div className="bg-gray-800/50 rounded-lg p-3">
+                <div className="bg-gray-800/50 rounded-lg p-2 xl:p-3">
                   <div className="flex items-start space-x-2">
-                    <Brain className="w-4 h-4 mt-1 text-purple-400" />
+                    <Brain className="w-3 h-3 xl:w-4 xl:h-4 mt-1 text-purple-400" />
                     <div>
-                      <p className="text-sm text-gray-300">
+                      <p className="text-xs xl:text-sm text-gray-300">
                         I notice this payment clause has 45-day terms. Industry standard is typically 30 days. Would you like me to suggest improvements?
                       </p>
                     </div>
                   </div>
                 </div>
                 
-                <div className="bg-blue-500/10 rounded-lg p-3 ml-6">
-                  <p className="text-sm text-gray-300">
+                <div className="bg-blue-500/10 rounded-lg p-2 xl:p-3 ml-4 xl:ml-6">
+                  <p className="text-xs xl:text-sm text-gray-300">
                     Yes, please analyze the risks and suggest alternatives.
                   </p>
                 </div>
 
-                <div className="bg-gray-800/50 rounded-lg p-3">
+                <div className="bg-gray-800/50 rounded-lg p-2 xl:p-3">
                   <div className="flex items-start space-x-2">
-                    <Brain className="w-4 h-4 mt-1 text-purple-400" />
+                    <Brain className="w-3 h-3 xl:w-4 xl:h-4 mt-1 text-purple-400" />
                     <div>
-                      <p className="text-sm text-gray-300 mb-2">
+                      <p className="text-xs xl:text-sm text-gray-300 mb-2">
                         <strong>Risk Analysis:</strong>
                       </p>
                       <ul className="text-xs text-gray-400 space-y-1">
@@ -384,7 +445,7 @@ const FullDocumentEditor = ({ showInlineHighlights, trackChanges, comparisonMode
                         <li>• Above industry standard (30 days)</li>
                         <li>• May indicate client financial concerns</li>
                       </ul>
-                      <p className="text-sm text-gray-300 mt-2">
+                      <p className="text-xs xl:text-sm text-gray-300 mt-2">
                         <strong>Recommendation:</strong> Negotiate to 30 days or add late fees.
                       </p>
                     </div>
@@ -397,48 +458,48 @@ const FullDocumentEditor = ({ showInlineHighlights, trackChanges, comparisonMode
                   <input 
                     type="text" 
                     placeholder="Ask about this clause..." 
-                    className="flex-1 bg-gray-800 border border-gray-700 rounded px-3 py-2 text-sm text-white placeholder-gray-400"
+                    className="flex-1 bg-gray-800 border border-gray-700 rounded px-2 xl:px-3 py-1 xl:py-2 text-xs xl:text-sm text-white placeholder-gray-400"
                   />
-                  <Button size="sm" className="bg-purple-600 hover:bg-purple-700">
-                    <MessageCircle className="w-4 h-4" />
+                  <Button size="sm" className="bg-purple-600 hover:bg-purple-700 p-1 xl:p-2">
+                    <MessageCircle className="w-3 h-3 xl:w-4 xl:h-4" />
                   </Button>
                 </div>
               </div>
             </TabsContent>
 
-            <TabsContent value="comparison" className="flex-1 p-4">
-              <div className="space-y-4">
-                <div className="text-sm">
+            <TabsContent value="comparison" className="flex-1 p-3 xl:p-4">
+              <div className="space-y-3 xl:space-y-4">
+                <div className="text-xs xl:text-sm">
                   <h4 className="font-medium text-white mb-2">Comparison Analysis</h4>
                   <div className="space-y-3">
-                    <div className="bg-gray-800/30 rounded p-3">
+                    <div className="bg-gray-800/30 rounded p-2 xl:p-3">
                       <div className="flex justify-between items-center mb-2">
-                        <span className="text-gray-300">vs. Firm Template</span>
-                        <Badge variant="outline" className="text-red-400 border-red-400">-35%</Badge>
+                        <span className="text-gray-300 text-xs">vs. Firm Template</span>
+                        <Badge variant="outline" className="text-red-400 border-red-400 text-xs">-35%</Badge>
                       </div>
                       <Progress value={35} className="h-1" />
                     </div>
                     
-                    <div className="bg-gray-800/30 rounded p-3">
+                    <div className="bg-gray-800/30 rounded p-2 xl:p-3">
                       <div className="flex justify-between items-center mb-2">
-                        <span className="text-gray-300">vs. Industry Standard</span>
-                        <Badge variant="outline" className="text-yellow-400 border-yellow-400">58%</Badge>
+                        <span className="text-gray-300 text-xs">vs. Industry Standard</span>
+                        <Badge variant="outline" className="text-yellow-400 border-yellow-400 text-xs">58%</Badge>
                       </div>
                       <Progress value={58} className="h-1" />
                     </div>
                     
-                    <div className="bg-gray-800/30 rounded p-3">
+                    <div className="bg-gray-800/30 rounded p-2 xl:p-3">
                       <div className="flex justify-between items-center mb-2">
-                        <span className="text-gray-300">Legal Compliance</span>
-                        <Badge variant="outline" className="text-green-400 border-green-400">89%</Badge>
+                        <span className="text-gray-300 text-xs">Legal Compliance</span>
+                        <Badge variant="outline" className="text-green-400 border-green-400 text-xs">89%</Badge>
                       </div>
                       <Progress value={89} className="h-1" />
                     </div>
                   </div>
                 </div>
 
-                <div className="mt-4">
-                  <h5 className="text-sm font-medium text-white mb-2">Key Differences</h5>
+                <div className="mt-3 xl:mt-4">
+                  <h5 className="text-xs xl:text-sm font-medium text-white mb-2">Key Differences</h5>
                   <div className="space-y-2 text-xs">
                     <div className="bg-red-500/10 rounded p-2 border-l-2 border-red-500">
                       <span className="text-red-400 font-medium">Payment Terms:</span>
@@ -453,10 +514,10 @@ const FullDocumentEditor = ({ showInlineHighlights, trackChanges, comparisonMode
               </div>
             </TabsContent>
 
-            <TabsContent value="memory" className="flex-1 p-4">
-              <div className="space-y-4">
+            <TabsContent value="memory" className="flex-1 p-3 xl:p-4">
+              <div className="space-y-3 xl:space-y-4">
                 <div>
-                  <h4 className="text-sm font-medium text-white mb-2">Project Context</h4>
+                  <h4 className="text-xs xl:text-sm font-medium text-white mb-2">Project Context</h4>
                   <div className="space-y-2 text-xs text-gray-400">
                     <div className="bg-gray-800/30 rounded p-2">
                       <span className="text-purple-400">Client:</span> ABC Corporation (Delaware Corp)
@@ -471,7 +532,7 @@ const FullDocumentEditor = ({ showInlineHighlights, trackChanges, comparisonMode
                 </div>
 
                 <div>
-                  <h4 className="text-sm font-medium text-white mb-2">Previous Analysis</h4>
+                  <h4 className="text-xs xl:text-sm font-medium text-white mb-2">Previous Analysis</h4>
                   <div className="space-y-2 text-xs">
                     <div className="bg-gray-800/30 rounded p-2">
                       <div className="flex items-center space-x-2 mb-1">
@@ -491,7 +552,7 @@ const FullDocumentEditor = ({ showInlineHighlights, trackChanges, comparisonMode
                 </div>
 
                 <div>
-                  <h4 className="text-sm font-medium text-white mb-2">Related Documents</h4>
+                  <h4 className="text-xs xl:text-sm font-medium text-white mb-2">Related Documents</h4>
                   <div className="space-y-1 text-xs">
                     <div className="flex items-center space-x-2 p-2 bg-gray-800/30 rounded cursor-pointer hover:bg-gray-700/30">
                       <BookOpen className="w-3 h-3 text-gray-400" />
