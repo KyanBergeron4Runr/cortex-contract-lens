@@ -5,6 +5,7 @@ import DemoFooter from "./DemoFooter";
 import FullDocumentEditor from "./FullDocumentEditor";
 import VideoSection from "./VideoSection";
 import FlowMapSection from "./FlowMapSection";
+import { Button } from "@/components/ui/button";
 
 const DemoPage = () => {
   return (
@@ -43,7 +44,7 @@ const DemoPage = () => {
           </div>
           
           {/* Fake Browser Frame - Much Bigger */}
-          <div className="bg-gradient-to-r from-primary/20 to-primary/10 rounded-2xl p-1 max-w-[95vw] mx-auto">
+          <div className="bg-gradient-to-r from-primary/20 to-primary/10 rounded-2xl p-1 max-w-[98vw] mx-auto">
             <div className="bg-card/40 backdrop-blur-sm rounded-xl overflow-hidden shadow-2xl">
               {/* Browser Header */}
               <div className="bg-muted/50 px-6 py-4 flex items-center space-x-3 border-b border-border/30">
@@ -60,7 +61,7 @@ const DemoPage = () => {
               </div>
               
               {/* Contract Editor - Much Bigger Height */}
-              <div className="h-[1200px] xl:h-[1400px] 2xl:h-[1600px] overflow-hidden">
+              <div className="h-[1400px] xl:h-[1600px] 2xl:h-[1800px] overflow-hidden">
                 <div className="h-full w-full">
                   <FullDocumentEditor 
                     showInlineHighlights={true}
@@ -99,6 +100,27 @@ const DemoPage = () => {
         {/* Section 3: Flow Map */}
         <FlowMapSection />
       </div>
+
+      {/* Enhanced Footer with CTA */}
+      <footer className="border-t border-border/30 bg-card/20 backdrop-blur-sm">
+        <div className="max-w-6xl mx-auto px-6 py-16">
+          <div className="text-center">
+            <h3 className="text-2xl font-semibold text-foreground mb-4">
+              Have a project in mind? Let's talk — we'll help you build it right.
+            </h3>
+            <p className="text-muted-foreground mb-8 max-w-2xl mx-auto">
+              Ready to transform your legal workflows with AI-powered contract analysis? 
+              Get in touch with our team to discuss your requirements.
+            </p>
+            <Button 
+              size="lg" 
+              className="bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary/70 text-white px-8 py-3 rounded-lg font-medium transition-all duration-200 hover:shadow-lg"
+            >
+              Start Your Project
+            </Button>
+          </div>
+        </div>
+      </footer>
 
       <DemoFooter />
     </div>
