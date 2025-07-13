@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Switch } from "@/components/ui/switch";
 import { Button } from "@/components/ui/button";
@@ -377,10 +376,10 @@ const FullDocumentEditor = ({ showInlineHighlights, trackChanges, comparisonMode
         </div>
       </div>
 
-      {/* Contract Analysis Sidebar */}
-      <div className="w-64 xl:w-80 border-l border-gray-800 bg-[#0e1015] flex-shrink-0 hidden lg:block">
-        <div className="p-3 xl:p-4 border-b border-gray-800">
-          <h3 className="font-semibold text-white mb-2 text-sm xl:text-base">Contract Analysis</h3>
+      {/* Contract Analysis Sidebar - Hidden on screens below 1536px (2xl) */}
+      <div className="w-80 border-l border-gray-800 bg-[#0e1015] flex-shrink-0 hidden 2xl:block">
+        <div className="p-4 border-b border-gray-800">
+          <h3 className="font-semibold text-white mb-2 text-base">Contract Analysis</h3>
           <div className="flex items-center space-x-2 mb-3">
             <div className="flex-1 bg-gray-800 rounded-full h-2">
               <div 
@@ -388,35 +387,35 @@ const FullDocumentEditor = ({ showInlineHighlights, trackChanges, comparisonMode
                 style={{ width: `${contractScore}%` }}
               />
             </div>
-            <span className="text-xs xl:text-sm font-medium text-white">{contractScore}%</span>
+            <span className="text-sm font-medium text-white">{contractScore}%</span>
           </div>
         </div>
 
-        <div className="p-3 xl:p-4 space-y-3 xl:space-y-4">
+        <div className="p-4 space-y-4">
           <div className="space-y-2">
-            <div className="flex items-center justify-between text-xs xl:text-sm">
+            <div className="flex items-center justify-between text-sm">
               <span className="text-gray-400">High Risk Clauses</span>
               <span className="text-red-400 font-medium">2</span>
             </div>
-            <div className="flex items-center justify-between text-xs xl:text-sm">
+            <div className="flex items-center justify-between text-sm">
               <span className="text-gray-400">Medium Risk</span>
               <span className="text-yellow-400 font-medium">2</span>
             </div>
-            <div className="flex items-center justify-between text-xs xl:text-sm">
+            <div className="flex items-center justify-between text-sm">
               <span className="text-gray-400">Low Risk</span>
               <span className="text-green-400 font-medium">4</span>
             </div>
           </div>
 
-          <div className="pt-3 xl:pt-4 border-t border-gray-800">
-            <Button variant="outline" className="w-full justify-start border-gray-700 text-gray-300 hover:bg-gray-800 text-xs xl:text-sm">
-              <Brain className="w-3 h-3 xl:w-4 xl:h-4 mr-2" />
+          <div className="pt-4 border-t border-gray-800">
+            <Button variant="outline" className="w-full justify-start border-gray-700 text-gray-300 hover:bg-gray-800 text-sm">
+              <Brain className="w-4 h-4 mr-2" />
               Ask AI about this section
             </Button>
           </div>
 
-          <div className="pt-3 xl:pt-4 space-y-2">
-            <h4 className="text-xs xl:text-sm font-medium text-white">Key Risk Areas</h4>
+          <div className="pt-4 space-y-2">
+            <h4 className="text-sm font-medium text-white">Key Risk Areas</h4>
             <div className="text-xs text-gray-300 space-y-2">
               <div className="p-2 bg-red-500/10 rounded border-l-2 border-red-500 cursor-pointer hover:bg-red-500/20 transition-colors">
                 <div className="font-medium text-red-400 text-xs">IP Rights Issue</div>
@@ -435,13 +434,13 @@ const FullDocumentEditor = ({ showInlineHighlights, trackChanges, comparisonMode
         </div>
       </div>
 
-      {/* Clause Intelligence Panel */}
-      <div className="w-64 xl:w-96 border-l border-gray-800 bg-[#0e1015] flex-shrink-0 hidden xl:block">
+      {/* Clause Intelligence Panel - Show on xl and above, but stack differently */}
+      <div className="w-96 border-l border-gray-800 bg-[#0e1015] flex-shrink-0 hidden xl:block 2xl:block">
         <div className="h-full flex flex-col">
-          <div className="p-3 xl:p-4 border-b border-gray-800">
-            <h3 className="font-semibold text-white mb-2 text-sm xl:text-base">Clause Intelligence</h3>
+          <div className="p-4 border-b border-gray-800">
+            <h3 className="font-semibold text-white mb-2 text-base">Clause Intelligence</h3>
             {selectedClause && (
-              <p className="text-xs xl:text-sm text-gray-400">
+              <p className="text-sm text-gray-400">
                 Analyzing Section {contractClauses.find(c => c.id === selectedClause)?.section}
               </p>
             )}
@@ -455,7 +454,7 @@ const FullDocumentEditor = ({ showInlineHighlights, trackChanges, comparisonMode
             </TabsList>
 
             <TabsContent value="chat" className="flex-1 flex flex-col m-0">
-              <div className="flex-1 overflow-y-auto p-3 xl:p-4 space-y-3 xl:space-y-4">
+              <div className="flex-1 overflow-y-auto p-4 space-y-4">
                 {chatMessages.map((message) => (
                   <div key={message.id} className={`flex ${message.type === 'user' ? 'justify-end' : 'justify-start'}`}>
                     <div className={`flex items-start space-x-2 max-w-[85%] ${message.type === 'user' ? 'flex-row-reverse space-x-reverse' : 'flex-row'}`}>
@@ -475,7 +474,7 @@ const FullDocumentEditor = ({ showInlineHighlights, trackChanges, comparisonMode
                           ? 'bg-primary text-primary-foreground' 
                           : 'bg-gray-800/50 text-gray-300'
                       }`}>
-                        <div className="text-xs xl:text-sm whitespace-pre-line">{message.content}</div>
+                        <div className="text-sm whitespace-pre-line">{message.content}</div>
                         
                         {message.hasButtons && message.type === 'bot' && (
                           <div className="mt-2 space-y-1">
@@ -496,7 +495,7 @@ const FullDocumentEditor = ({ showInlineHighlights, trackChanges, comparisonMode
               </div>
               
               {/* Quick Questions */}
-              <div className="p-3 xl:p-4 border-t border-gray-800 bg-gray-900/30">
+              <div className="p-4 border-t border-gray-800 bg-gray-900/30">
                 <p className="text-xs text-gray-400 mb-2">💡 Quick Questions:</p>
                 <div className="space-y-1">
                   <Button variant="ghost" size="sm" className="w-full justify-start text-xs h-7 text-gray-400 hover:text-white hover:bg-gray-800">
@@ -512,23 +511,23 @@ const FullDocumentEditor = ({ showInlineHighlights, trackChanges, comparisonMode
               </div>
 
               {/* Chat Input */}
-              <div className="p-3 xl:p-4 border-t border-gray-800">
+              <div className="p-4 border-t border-gray-800">
                 <div className="flex space-x-2">
                   <Input
                     placeholder="Ask about contract risks..."
                     value={chatInput}
                     onChange={(e) => setChatInput(e.target.value)}
                     onKeyPress={(e) => e.key === 'Enter' && handleSendMessage()}
-                    className="flex-1 text-xs xl:text-sm bg-gray-800 border-gray-700 text-white placeholder-gray-400"
+                    className="flex-1 text-sm bg-gray-800 border-gray-700 text-white placeholder-gray-400"
                   />
                   <Button size="sm" onClick={handleSendMessage} className="bg-purple-600 hover:bg-purple-700">
-                    <Send className="w-3 h-3 xl:w-4 xl:h-4" />
+                    <Send className="w-4 h-4" />
                   </Button>
                 </div>
               </div>
             </TabsContent>
 
-            <TabsContent value="comparison" className="flex-1 m-0 p-3 xl:p-4">
+            <TabsContent value="comparison" className="flex-1 m-0 p-4">
               <div className="space-y-4">
                 <h4 className="font-medium text-sm">Smart Clause Comparison</h4>
                 
@@ -574,7 +573,7 @@ const FullDocumentEditor = ({ showInlineHighlights, trackChanges, comparisonMode
               </div>
             </TabsContent>
 
-            <TabsContent value="memory" className="flex-1 m-0 p-3 xl:p-4">
+            <TabsContent value="memory" className="flex-1 m-0 p-4">
               <div className="space-y-4">
                 <div>
                   <h4 className="text-sm font-medium text-white mb-2">Project Context</h4>
@@ -630,8 +629,8 @@ const FullDocumentEditor = ({ showInlineHighlights, trackChanges, comparisonMode
         </div>
       </div>
 
-      {/* Floating AI Chat Button */}
-      <div className="fixed bottom-6 right-6 z-50">
+      {/* Floating AI Chat Button - Visible on smaller screens */}
+      <div className="fixed bottom-6 right-6 z-50 xl:hidden">
         <Button
           size="lg"
           className="w-14 h-14 rounded-full bg-gradient-to-r from-purple-600 to-purple-700 hover:from-purple-700 hover:to-purple-800 shadow-lg hover:shadow-xl transition-all duration-200"
