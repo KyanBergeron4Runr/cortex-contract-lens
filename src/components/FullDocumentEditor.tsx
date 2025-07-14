@@ -59,9 +59,9 @@ const FullDocumentEditor = ({ showInlineHighlights, trackChanges, comparisonMode
 
   const getClauseStatusColor = (status: string) => {
     switch (status) {
-      case 'high': return 'bg-red-50 border-red-200 text-red-900 dark:bg-red-950 dark:border-red-800 dark:text-red-100';
-      case 'medium': return 'bg-yellow-50 border-yellow-200 text-yellow-900 dark:bg-yellow-950 dark:border-yellow-800 dark:text-yellow-100';
-      case 'low': return 'bg-green-50 border-green-200 text-green-900 dark:bg-green-950 dark:border-green-800 dark:text-green-100';
+      case 'high': return 'bg-red-950 border-red-800 text-red-100';
+      case 'medium': return 'bg-yellow-950 border-yellow-800 text-yellow-100';
+      case 'low': return 'bg-green-950 border-green-800 text-green-100';
       default: return 'bg-muted border-border text-foreground';
     }
   };
@@ -221,12 +221,12 @@ const FullDocumentEditor = ({ showInlineHighlights, trackChanges, comparisonMode
         )}
 
         {/* Main Document Area */}
-        <div className="flex-1 overflow-y-auto">
+        <div className="flex-1 overflow-y-auto bg-[#0e1015]">
           <div className="p-8 max-w-4xl mx-auto">
-            <div className="bg-card shadow-lg rounded-lg p-8 space-y-8 border border-border">
+            <div className="bg-[#1a1d29] shadow-lg rounded-lg p-8 space-y-8 border border-gray-800">
               <div className="text-center mb-8">
-                <h1 className="text-3xl font-bold text-foreground mb-2">Service Agreement</h1>
-                <p className="text-muted-foreground">Contract Analysis & Review</p>
+                <h1 className="text-3xl font-bold text-white mb-2">Service Agreement</h1>
+                <p className="text-gray-400">Contract Analysis & Review</p>
               </div>
 
               {clauses.map((clause) => (
@@ -250,16 +250,16 @@ const FullDocumentEditor = ({ showInlineHighlights, trackChanges, comparisonMode
                     {clause.content}
                   </p>
                   {clause.status === 'high' && (
-                    <div className="mt-4 p-3 bg-red-100 dark:bg-red-950 border border-red-200 dark:border-red-800 rounded">
-                      <div className="flex items-center text-red-800 dark:text-red-200">
+                    <div className="mt-4 p-3 bg-red-950 border border-red-800 rounded">
+                      <div className="flex items-center text-red-200">
                         <AlertTriangle className="w-4 h-4 mr-2" />
                         <span className="text-sm font-medium">High Risk: IP assignment may be too broad</span>
                       </div>
                     </div>
                   )}
                   {clause.status === 'medium' && (
-                    <div className="mt-4 p-3 bg-yellow-100 dark:bg-yellow-950 border border-yellow-200 dark:border-yellow-800 rounded">
-                      <div className="flex items-center text-yellow-800 dark:text-yellow-200">
+                    <div className="mt-4 p-3 bg-yellow-950 border border-yellow-800 rounded">
+                      <div className="flex items-center text-yellow-200">
                         <AlertTriangle className="w-4 h-4 mr-2" />
                         <span className="text-sm font-medium">Medium Risk: Consider adding penalty caps</span>
                       </div>
