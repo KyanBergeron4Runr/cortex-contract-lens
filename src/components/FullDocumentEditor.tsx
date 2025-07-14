@@ -180,17 +180,17 @@ const FullDocumentEditor = ({ showInlineHighlights, trackChanges, comparisonMode
 
                 {/* Risk Counters */}
                 <div className="grid grid-cols-3 gap-3 mb-6">
-                  <div className="bg-red-50 dark:bg-red-950 border border-red-200 dark:border-red-800 rounded-lg p-3 text-center">
-                    <div className="text-2xl font-bold text-red-600 dark:text-red-400">1</div>
-                    <div className="text-xs text-red-600 dark:text-red-400">High Risk</div>
+                  <div className="bg-red-950 border border-red-800 rounded-lg p-3 text-center">
+                    <div className="text-2xl font-bold text-red-400">1</div>
+                    <div className="text-xs text-red-400">High Risk</div>
                   </div>
-                  <div className="bg-yellow-50 dark:bg-yellow-950 border border-yellow-200 dark:border-yellow-800 rounded-lg p-3 text-center">
-                    <div className="text-2xl font-bold text-yellow-600 dark:text-yellow-400">2</div>
-                    <div className="text-xs text-yellow-600 dark:text-yellow-400">Medium Risk</div>
+                  <div className="bg-yellow-950 border border-yellow-800 rounded-lg p-3 text-center">
+                    <div className="text-2xl font-bold text-yellow-400">2</div>
+                    <div className="text-xs text-yellow-400">Medium Risk</div>
                   </div>
-                  <div className="bg-green-50 dark:bg-green-950 border border-green-200 dark:border-green-800 rounded-lg p-3 text-center">
-                    <div className="text-2xl font-bold text-green-600 dark:text-green-400">3</div>
-                    <div className="text-xs text-green-600 dark:text-green-400">Low Risk</div>
+                  <div className="bg-green-950 border border-green-800 rounded-lg p-3 text-center">
+                    <div className="text-2xl font-bold text-green-400">3</div>
+                    <div className="text-xs text-green-400">Low Risk</div>
                   </div>
                 </div>
 
