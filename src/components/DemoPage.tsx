@@ -78,9 +78,9 @@ const DemoPage = () => {
                 </div>
               </div>
               
-              {/* Contract Editor - Much Bigger Height */}
-              <div className="h-[1400px] xl:h-[1600px] 2xl:h-[1800px] overflow-hidden">
-                <div className="h-full w-full">
+              {/* Contract Editor - Much Bigger Height with proper dark theme */}
+              <div className="h-[1400px] xl:h-[1600px] 2xl:h-[1800px] overflow-hidden bg-[#0e1015]">
+                <div className="h-full w-full text-foreground">
                   <FullDocumentEditor 
                     showInlineHighlights={true}
                     trackChanges={false}
@@ -264,7 +264,10 @@ const DemoPage = () => {
             <Button 
               size="lg" 
               className="bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary/70 text-white px-8 py-3 rounded-lg font-medium transition-all duration-200 hover:shadow-lg"
-              onClick={() => window.open('https://4runrtech.com/contact', '_blank')}
+              onClick={() => {
+                console.log('Opening contact page...');
+                window.open('https://4runrtech.com/contact', '_blank');
+              }}
             >
               Get Started Today
             </Button>
