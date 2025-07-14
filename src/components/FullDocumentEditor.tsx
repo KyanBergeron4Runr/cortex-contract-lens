@@ -567,131 +567,140 @@ const FullDocumentEditor = ({ showInlineHighlights, trackChanges, comparisonMode
 
       {/* Footer Controls - ActionControlsFooter equivalent */}
       <footer className="bg-card/50 border-t border-border">
-        <div className="p-4">
-          <div className="max-w-7xl mx-auto flex items-center justify-between">
-            {/* Left section - Analysis Summary */}
-            <div className="flex items-center space-x-4">
-              <Button 
-                className="flex items-center space-x-2" 
-                variant="outline"
-                onClick={() => setShowAnalysisSummary(!showAnalysisSummary)}
-              >
-                <BarChart3 className="w-4 h-4" />
-                <span>Contract Analysis Summary</span>
-                <ChevronUp className={`w-4 h-4 transition-transform ${showAnalysisSummary ? 'rotate-180' : ''}`} />
-              </Button>
-
-              <div className="flex items-center space-x-2 text-sm text-muted-foreground">
-                <span>6 clauses analyzed</span>
-                <span>•</span>
-                <span className="text-destructive">1 high risk</span>
-                <span>•</span>
-                <span className="text-yellow-500">2 medium risk</span>
-              </div>
-            </div>
-
-            {/* Center section - View controls */}
-            <div className="flex items-center space-x-4">
-              <div className="flex items-center space-x-2">
-                <span className="text-sm text-muted-foreground">View:</span>
+        <div className="px-2 py-3">
+          <div className="max-w-full mx-auto">
+            {/* Mobile-first responsive layout */}
+            <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between space-y-3 lg:space-y-0">
+              
+              {/* Left section - Analysis Summary */}
+              <div className="flex flex-col sm:flex-row sm:items-center space-y-2 sm:space-y-0 sm:space-x-3">
                 <Button 
-                  variant="default" 
-                  size="sm" 
-                  className="flex items-center space-x-1"
-                  onClick={() => console.log('List view selected')}
+                  className="flex items-center justify-center space-x-1 text-xs" 
+                  variant="outline"
+                  size="sm"
+                  onClick={() => {
+                    console.log('Contract Analysis Summary clicked');
+                    setShowAnalysisSummary(!showAnalysisSummary);
+                  }}
                 >
-                  <List className="w-4 h-4" />
-                  <span>List</span>
+                  <BarChart3 className="w-3 h-3" />
+                  <span className="hidden sm:inline">Contract Analysis Summary</span>
+                  <span className="sm:hidden">Analysis</span>
+                  <ChevronUp className={`w-3 h-3 transition-transform ${showAnalysisSummary ? 'rotate-180' : ''}`} />
                 </Button>
-                <Button 
-                  variant="outline" 
-                  size="sm" 
-                  className="flex items-center space-x-1"
-                  onClick={() => console.log('Tree view selected')}
-                >
-                  <TreePine className="w-4 h-4" />
-                  <span>Tree</span>
-                </Button>
+
+                <div className="flex items-center justify-center sm:justify-start space-x-2 text-xs text-muted-foreground">
+                  <span>6 clauses</span>
+                  <span>•</span>
+                  <span className="text-destructive">1 high</span>
+                  <span>•</span>
+                  <span className="text-yellow-500">2 medium</span>
+                </div>
               </div>
 
-              <div className="flex items-center space-x-4">
-                <div className="flex items-center space-x-2">
-                  <Highlighter className="w-4 h-4 text-muted-foreground" />
-                  <span className="text-sm text-muted-foreground">Highlights</span>
-                  <Switch 
-                    checked={highlights}
-                    onCheckedChange={setHighlights}
-                  />
+              {/* Center section - View controls */}
+              <div className="flex flex-col sm:flex-row sm:items-center space-y-2 sm:space-y-0 sm:space-x-3">
+                <div className="flex items-center justify-center space-x-2">
+                  <span className="text-xs text-muted-foreground">View:</span>
+                  <Button 
+                    variant="default" 
+                    size="sm" 
+                    className="flex items-center space-x-1 text-xs px-2 py-1"
+                    onClick={() => console.log('List view selected')}
+                  >
+                    <List className="w-3 h-3" />
+                    <span>List</span>
+                  </Button>
+                  <Button 
+                    variant="outline" 
+                    size="sm" 
+                    className="flex items-center space-x-1 text-xs px-2 py-1"
+                    onClick={() => console.log('Tree view selected')}
+                  >
+                    <TreePine className="w-3 h-3" />
+                    <span>Tree</span>
+                  </Button>
                 </div>
 
-                <div className="flex items-center space-x-2">
-                  <GitBranch className="w-4 h-4 text-muted-foreground" />
-                  <span className="text-sm text-muted-foreground">Track Changes</span>
-                  <Switch 
-                    checked={trackingChanges}
-                    onCheckedChange={setTrackingChanges}
-                  />
+                <div className="flex flex-wrap items-center justify-center gap-3">
+                  <div className="flex items-center space-x-1">
+                    <Highlighter className="w-3 h-3 text-muted-foreground" />
+                    <span className="text-xs text-muted-foreground hidden sm:inline">Highlights</span>
+                    <Switch 
+                      checked={highlights}
+                      onCheckedChange={setHighlights}
+                    />
+                  </div>
+
+                  <div className="flex items-center space-x-1">
+                    <GitBranch className="w-3 h-3 text-muted-foreground" />
+                    <span className="text-xs text-muted-foreground hidden sm:inline">Track</span>
+                    <Switch 
+                      checked={trackingChanges}
+                      onCheckedChange={setTrackingChanges}
+                    />
+                  </div>
+
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <Button variant="outline" size="sm" className="flex items-center space-x-1 text-xs px-2 py-1">
+                        <Eye className="w-3 h-3" />
+                        <span className="hidden sm:inline">Compare to</span>
+                        <span className="capitalize text-primary text-xs">{currentComparisonMode}</span>
+                      </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent className="bg-popover border border-border">
+                      <DropdownMenuItem onClick={() => setCurrentComparisonMode('template')} className="text-popover-foreground hover:bg-accent hover:text-accent-foreground">
+                        Template
+                      </DropdownMenuItem>
+                      <DropdownMenuItem onClick={() => setCurrentComparisonMode('lastVersion')} className="text-popover-foreground hover:bg-accent hover:text-accent-foreground">
+                        Last Version
+                      </DropdownMenuItem>
+                      <DropdownMenuItem onClick={() => setCurrentComparisonMode('industry')} className="text-popover-foreground hover:bg-accent hover:text-accent-foreground">
+                        Industry Standard
+                      </DropdownMenuItem>
+                    </DropdownMenuContent>
+                  </DropdownMenu>
                 </div>
+              </div>
+
+              {/* Right section - Action buttons */}
+              <div className="flex flex-wrap items-center justify-center gap-1">
+                <Button variant="outline" size="sm" className="flex items-center space-x-1 text-xs px-2 py-1" onClick={() => console.log('Clause Library clicked')}>
+                  <FolderOpen className="w-3 h-3" />
+                  <span className="hidden lg:inline">Library</span>
+                </Button>
+
+                <Button variant="outline" size="sm" className="flex items-center space-x-1 text-xs px-2 py-1" onClick={() => console.log('Past Contracts clicked')}>
+                  <Clock className="w-3 h-3" />
+                  <span className="hidden lg:inline">Past</span>
+                </Button>
+
+                <Button variant="outline" size="sm" className="flex items-center space-x-1 text-xs px-2 py-1" onClick={() => console.log('Tag Editor clicked')}>
+                  <Tag className="w-3 h-3" />
+                  <span className="hidden lg:inline">Tags</span>
+                </Button>
 
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
-                    <Button variant="outline" className="flex items-center space-x-2">
-                      <Eye className="w-4 h-4" />
-                      <span>Compare to</span>
-                      <span className="capitalize text-primary">{currentComparisonMode}</span>
+                    <Button size="sm" className="flex items-center space-x-1 bg-gradient-to-r from-primary to-primary/80 text-xs px-2 py-1">
+                      <Download className="w-3 h-3" />
+                      <span>Export</span>
                     </Button>
                   </DropdownMenuTrigger>
                   <DropdownMenuContent className="bg-popover border border-border">
-                    <DropdownMenuItem onClick={() => setCurrentComparisonMode('template')} className="text-popover-foreground hover:bg-accent hover:text-accent-foreground">
-                      Template
+                    <DropdownMenuItem onClick={() => console.log('Export as PDF')} className="text-popover-foreground hover:bg-accent hover:text-accent-foreground">
+                      Export as PDF
                     </DropdownMenuItem>
-                    <DropdownMenuItem onClick={() => setCurrentComparisonMode('lastVersion')} className="text-popover-foreground hover:bg-accent hover:text-accent-foreground">
-                      Last Version
+                    <DropdownMenuItem onClick={() => console.log('Export as Word')} className="text-popover-foreground hover:bg-accent hover:text-accent-foreground">
+                      Export as Word
                     </DropdownMenuItem>
-                    <DropdownMenuItem onClick={() => setCurrentComparisonMode('industry')} className="text-popover-foreground hover:bg-accent hover:text-accent-foreground">
-                      Industry Standard
+                    <DropdownMenuItem onClick={() => console.log('Export as HTML')} className="text-popover-foreground hover:bg-accent hover:text-accent-foreground">
+                      Export as HTML
                     </DropdownMenuItem>
                   </DropdownMenuContent>
                 </DropdownMenu>
               </div>
-            </div>
-
-            {/* Right section - Action buttons */}
-            <div className="flex items-center space-x-2">
-              <Button variant="outline" size="sm" className="flex items-center space-x-1" onClick={() => console.log('Clause Library clicked')}>
-                <FolderOpen className="w-4 h-4" />
-                <span>Clause Library</span>
-              </Button>
-
-              <Button variant="outline" size="sm" className="flex items-center space-x-1" onClick={() => console.log('Past Contracts clicked')}>
-                <Clock className="w-4 h-4" />
-                <span>Past Contracts</span>
-              </Button>
-
-              <Button variant="outline" size="sm" className="flex items-center space-x-1" onClick={() => console.log('Tag Editor clicked')}>
-                <Tag className="w-4 h-4" />
-                <span>Tag Editor</span>
-              </Button>
-
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Button className="flex items-center space-x-2 bg-gradient-to-r from-primary to-primary/80">
-                    <Download className="w-4 h-4" />
-                    <span>Export Contract</span>
-                  </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent className="bg-popover border border-border">
-                  <DropdownMenuItem onClick={() => console.log('Export as PDF')} className="text-popover-foreground hover:bg-accent hover:text-accent-foreground">
-                    Export as PDF
-                  </DropdownMenuItem>
-                  <DropdownMenuItem onClick={() => console.log('Export as Word')} className="text-popover-foreground hover:bg-accent hover:text-accent-foreground">
-                    Export as Word
-                  </DropdownMenuItem>
-                  <DropdownMenuItem onClick={() => console.log('Export as HTML')} className="text-popover-foreground hover:bg-accent hover:text-accent-foreground">
-                    Export as HTML
-                  </DropdownMenuItem>
-                </DropdownMenuContent>
-              </DropdownMenu>
             </div>
           </div>
         </div>
