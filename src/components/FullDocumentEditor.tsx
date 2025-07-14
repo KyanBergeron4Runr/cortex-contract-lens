@@ -238,83 +238,83 @@ const FullDocumentEditor = ({ showInlineHighlights, trackChanges, comparisonMode
         )}
 
         {/* Main Document Area */}
-        <div className="flex-1 overflow-y-auto bg-[#0e1015] flex justify-center custom-scrollbar">
-          {documentViewMode === 'document' ? (
+        <div className="flex-1 overflow-y-auto bg-[#0e1015] custom-scrollbar">
+          <div className="flex justify-center">
             <div className="w-full max-w-5xl p-8">
-              <div className="bg-[#1a1d29] shadow-lg rounded-lg p-8 space-y-8 border border-gray-800">
-                <div className="text-center mb-8">
-                  <h1 className="text-3xl font-bold text-white mb-2">Service Agreement</h1>
-                  <p className="text-gray-400">Contract Analysis & Review</p>
-                </div>
-
-                {clauses.map((clause) => (
-                  <div key={clause.id} 
-                       className={`p-6 rounded-lg border-2 transition-all hover:shadow-md group ${getClauseStatusColor(clause.status)}`}>
-                    <div className="flex items-start justify-between mb-4">
-                      <h3 className="text-xl font-semibold">{clause.title}</h3>
-                      <div className="flex items-center space-x-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                        <Button variant="ghost" size="sm" onClick={() => handleClauseEdit(clause.id)}>
-                          <Edit className="w-4 h-4" />
-                        </Button>
-                        <Button variant="ghost" size="sm" onClick={() => console.log('Comment on clause:', clause.id)}>
-                          <MessageSquare className="w-4 h-4" />
-                        </Button>
-                        <Button variant="ghost" size="sm" onClick={() => console.log('Add to clause:', clause.id)}>
-                          <Plus className="w-4 h-4" />
-                        </Button>
-                      </div>
-                    </div>
-                    <p className="text-base leading-relaxed">
-                      {clause.content}
-                    </p>
-                    {clause.status === 'high' && (
-                      <div className="mt-4 p-3 bg-red-950 border border-red-800 rounded">
-                        <div className="flex items-center text-red-200">
-                          <AlertTriangle className="w-4 h-4 mr-2" />
-                          <span className="text-sm font-medium">High Risk: IP assignment may be too broad</span>
-                        </div>
-                      </div>
-                    )}
-                    {clause.status === 'medium' && (
-                      <div className="mt-4 p-3 bg-yellow-950 border border-yellow-800 rounded">
-                        <div className="flex items-center text-yellow-200">
-                          <AlertTriangle className="w-4 h-4 mr-2" />
-                          <span className="text-sm font-medium">Medium Risk: Consider adding penalty caps</span>
-                        </div>
-                      </div>
-                    )}
+              {documentViewMode === 'document' ? (
+                <div className="bg-[#1a1d29] shadow-lg rounded-lg p-8 space-y-8 border border-gray-800">
+                  <div className="text-center mb-8">
+                    <h1 className="text-3xl font-bold text-white mb-2">Service Agreement</h1>
+                    <p className="text-gray-400">Contract Analysis & Review</p>
                   </div>
-                ))}
-              </div>
-            </div>
-          ) : (
-            <div className="w-full max-w-5xl p-8">
-              <div className="bg-[#1a1d29] shadow-lg rounded-lg p-8 space-y-6 border border-gray-800">
-                <div className="text-center mb-8">
-                  <h1 className="text-3xl font-bold text-white mb-2">Clause Blocks View</h1>
-                  <p className="text-gray-400">Interactive Clause Analysis</p>
-                </div>
-                
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+
                   {clauses.map((clause) => (
                     <div key={clause.id} 
-                         className={`p-4 rounded-lg border-2 transition-all hover:shadow-md cursor-pointer ${getClauseStatusColor(clause.status)}`}>
-                      <h3 className="text-lg font-semibold mb-2">{clause.title}</h3>
-                      <p className="text-sm opacity-80 line-clamp-3">{clause.content}</p>
-                      <div className="mt-3 flex justify-between items-center">
-                        <Badge variant={clause.status === 'high' ? 'destructive' : clause.status === 'medium' ? 'secondary' : 'outline'}>
-                          {clause.status} risk
-                        </Badge>
-                        <Button variant="ghost" size="sm" onClick={() => handleClauseEdit(clause.id)}>
-                          <Edit className="w-4 h-4" />
-                        </Button>
+                         className={`p-6 rounded-lg border-2 transition-all hover:shadow-md group ${getClauseStatusColor(clause.status)}`}>
+                      <div className="flex items-start justify-between mb-4">
+                        <h3 className="text-xl font-semibold">{clause.title}</h3>
+                        <div className="flex items-center space-x-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                          <Button variant="ghost" size="sm" onClick={() => handleClauseEdit(clause.id)}>
+                            <Edit className="w-4 h-4" />
+                          </Button>
+                          <Button variant="ghost" size="sm" onClick={() => console.log('Comment on clause:', clause.id)}>
+                            <MessageSquare className="w-4 h-4" />
+                          </Button>
+                          <Button variant="ghost" size="sm" onClick={() => console.log('Add to clause:', clause.id)}>
+                            <Plus className="w-4 h-4" />
+                          </Button>
+                        </div>
                       </div>
+                      <p className="text-base leading-relaxed">
+                        {clause.content}
+                      </p>
+                      {clause.status === 'high' && (
+                        <div className="mt-4 p-3 bg-red-950 border border-red-800 rounded">
+                          <div className="flex items-center text-red-200">
+                            <AlertTriangle className="w-4 h-4 mr-2" />
+                            <span className="text-sm font-medium">High Risk: IP assignment may be too broad</span>
+                          </div>
+                        </div>
+                      )}
+                      {clause.status === 'medium' && (
+                        <div className="mt-4 p-3 bg-yellow-950 border border-yellow-800 rounded">
+                          <div className="flex items-center text-yellow-200">
+                            <AlertTriangle className="w-4 h-4 mr-2" />
+                            <span className="text-sm font-medium">Medium Risk: Consider adding penalty caps</span>
+                          </div>
+                        </div>
+                      )}
                     </div>
                   ))}
                 </div>
-              </div>
+              ) : (
+                <div className="bg-[#1a1d29] shadow-lg rounded-lg p-8 space-y-6 border border-gray-800">
+                  <div className="text-center mb-8">
+                    <h1 className="text-3xl font-bold text-white mb-2">Clause Blocks View</h1>
+                    <p className="text-gray-400">Interactive Clause Analysis</p>
+                  </div>
+                  
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    {clauses.map((clause) => (
+                      <div key={clause.id} 
+                           className={`p-4 rounded-lg border-2 transition-all hover:shadow-md cursor-pointer ${getClauseStatusColor(clause.status)}`}>
+                        <h3 className="text-lg font-semibold mb-2">{clause.title}</h3>
+                        <p className="text-sm opacity-80 line-clamp-3">{clause.content}</p>
+                        <div className="mt-3 flex justify-between items-center">
+                          <Badge variant={clause.status === 'high' ? 'destructive' : clause.status === 'medium' ? 'secondary' : 'outline'}>
+                            {clause.status} risk
+                          </Badge>
+                          <Button variant="ghost" size="sm" onClick={() => handleClauseEdit(clause.id)}>
+                            <Edit className="w-4 h-4" />
+                          </Button>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
             </div>
-          )}
+          </div>
         </div>
 
         {/* Right Sidebar - Clause Intelligence */}
@@ -694,7 +694,8 @@ const FullDocumentEditor = ({ showInlineHighlights, trackChanges, comparisonMode
               </DropdownMenu>
             </div>
           </div>
-        </footer>
+        </div>
+      </footer>
     </div>
   );
 };
