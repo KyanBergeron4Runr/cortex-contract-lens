@@ -31,7 +31,7 @@ const DemoPage = () => {
 
         {/* Intro Paragraph */}
         <div className="max-w-4xl mx-auto mb-20">
-          <div className="bg-card/20 backdrop-blur-sm rounded-xl p-8 border border-border/30">
+          <div className="bg-card/20 backdrop-blur-sm rounded-xl p-8 border border-border/30 text-center">
             <p className="text-lg text-foreground leading-relaxed mb-4">
               Most AI tools look impressive but don't integrate with how real legal teams actually work. 
               What you're seeing here is different — this is legal infrastructure.
