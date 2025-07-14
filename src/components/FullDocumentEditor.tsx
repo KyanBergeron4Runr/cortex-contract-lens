@@ -1,5 +1,4 @@
-
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { MessageSquare, Bot, Send, AlertTriangle, CheckCircle, Eye, EyeOff, Edit, BookOpen, Plus, BarChart3, Users, Calendar, FileText, Settings, Highlighter, GitBranch, Download, List, TreePine, FolderOpen, Clock, Tag, PenTool, Archive, ChevronUp } from 'lucide-react';
 import { Button } from './ui/button';
 import { Badge } from './ui/badge';
@@ -24,9 +23,10 @@ const FullDocumentEditor = ({ showInlineHighlights, trackChanges, comparisonMode
   const [currentComparisonMode, setCurrentComparisonMode] = useState(comparisonMode);
   const [chatInput, setChatInput] = useState('');
   const [showAnalysisSummary, setShowAnalysisSummary] = useState(false);
+  const [activeRightTab, setActiveRightTab] = useState<'chat' | 'compare' | 'memory'>('chat');
 
   // Simulate responsive behavior
-  React.useEffect(() => {
+  useEffect(() => {
     const handleResize = () => {
       const width = window.innerWidth;
       if (width < 1536) { // 2xl breakpoint
@@ -179,7 +179,7 @@ const FullDocumentEditor = ({ showInlineHighlights, trackChanges, comparisonMode
       <div className="flex-1 flex overflow-hidden">
         {/* Left Sidebar - Contract Analysis */}
         {showLeftSidebar && (
-          <div className="w-80 bg-card/30 border-r border-border p-6 overflow-y-auto">
+          <div className="w-80 bg-card/30 border-r border-border p-6 overflow-y-auto custom-scrollbar">
             <div className="space-y-6">
               <div>
                 <h3 className="text-lg font-semibold text-foreground mb-4">Contract Analysis</h3>
@@ -238,54 +238,83 @@ const FullDocumentEditor = ({ showInlineHighlights, trackChanges, comparisonMode
         )}
 
         {/* Main Document Area */}
-        <div className="flex-1 overflow-y-auto bg-[#0e1015] flex justify-center">
-          <div className="w-full max-w-5xl p-8">
-            <div className="bg-[#1a1d29] shadow-lg rounded-lg p-8 space-y-8 border border-gray-800">
-              <div className="text-center mb-8">
-                <h1 className="text-3xl font-bold text-white mb-2">Service Agreement</h1>
-                <p className="text-gray-400">Contract Analysis & Review</p>
-              </div>
-
-              {clauses.map((clause) => (
-                <div key={clause.id} 
-                     className={`p-6 rounded-lg border-2 transition-all hover:shadow-md group ${getClauseStatusColor(clause.status)}`}>
-                  <div className="flex items-start justify-between mb-4">
-                    <h3 className="text-xl font-semibold">{clause.title}</h3>
-                    <div className="flex items-center space-x-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                      <Button variant="ghost" size="sm" onClick={() => handleClauseEdit(clause.id)}>
-                        <Edit className="w-4 h-4" />
-                      </Button>
-                      <Button variant="ghost" size="sm" onClick={() => console.log('Comment on clause:', clause.id)}>
-                        <MessageSquare className="w-4 h-4" />
-                      </Button>
-                      <Button variant="ghost" size="sm" onClick={() => console.log('Add to clause:', clause.id)}>
-                        <Plus className="w-4 h-4" />
-                      </Button>
-                    </div>
-                  </div>
-                  <p className="text-base leading-relaxed">
-                    {clause.content}
-                  </p>
-                  {clause.status === 'high' && (
-                    <div className="mt-4 p-3 bg-red-950 border border-red-800 rounded">
-                      <div className="flex items-center text-red-200">
-                        <AlertTriangle className="w-4 h-4 mr-2" />
-                        <span className="text-sm font-medium">High Risk: IP assignment may be too broad</span>
-                      </div>
-                    </div>
-                  )}
-                  {clause.status === 'medium' && (
-                    <div className="mt-4 p-3 bg-yellow-950 border border-yellow-800 rounded">
-                      <div className="flex items-center text-yellow-200">
-                        <AlertTriangle className="w-4 h-4 mr-2" />
-                        <span className="text-sm font-medium">Medium Risk: Consider adding penalty caps</span>
-                      </div>
-                    </div>
-                  )}
+        <div className="flex-1 overflow-y-auto bg-[#0e1015] flex justify-center custom-scrollbar">
+          {documentViewMode === 'document' ? (
+            <div className="w-full max-w-5xl p-8">
+              <div className="bg-[#1a1d29] shadow-lg rounded-lg p-8 space-y-8 border border-gray-800">
+                <div className="text-center mb-8">
+                  <h1 className="text-3xl font-bold text-white mb-2">Service Agreement</h1>
+                  <p className="text-gray-400">Contract Analysis & Review</p>
                 </div>
-              ))}
+
+                {clauses.map((clause) => (
+                  <div key={clause.id} 
+                       className={`p-6 rounded-lg border-2 transition-all hover:shadow-md group ${getClauseStatusColor(clause.status)}`}>
+                    <div className="flex items-start justify-between mb-4">
+                      <h3 className="text-xl font-semibold">{clause.title}</h3>
+                      <div className="flex items-center space-x-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                        <Button variant="ghost" size="sm" onClick={() => handleClauseEdit(clause.id)}>
+                          <Edit className="w-4 h-4" />
+                        </Button>
+                        <Button variant="ghost" size="sm" onClick={() => console.log('Comment on clause:', clause.id)}>
+                          <MessageSquare className="w-4 h-4" />
+                        </Button>
+                        <Button variant="ghost" size="sm" onClick={() => console.log('Add to clause:', clause.id)}>
+                          <Plus className="w-4 h-4" />
+                        </Button>
+                      </div>
+                    </div>
+                    <p className="text-base leading-relaxed">
+                      {clause.content}
+                    </p>
+                    {clause.status === 'high' && (
+                      <div className="mt-4 p-3 bg-red-950 border border-red-800 rounded">
+                        <div className="flex items-center text-red-200">
+                          <AlertTriangle className="w-4 h-4 mr-2" />
+                          <span className="text-sm font-medium">High Risk: IP assignment may be too broad</span>
+                        </div>
+                      </div>
+                    )}
+                    {clause.status === 'medium' && (
+                      <div className="mt-4 p-3 bg-yellow-950 border border-yellow-800 rounded">
+                        <div className="flex items-center text-yellow-200">
+                          <AlertTriangle className="w-4 h-4 mr-2" />
+                          <span className="text-sm font-medium">Medium Risk: Consider adding penalty caps</span>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                ))}
+              </div>
             </div>
-          </div>
+          ) : (
+            <div className="w-full max-w-5xl p-8">
+              <div className="bg-[#1a1d29] shadow-lg rounded-lg p-8 space-y-6 border border-gray-800">
+                <div className="text-center mb-8">
+                  <h1 className="text-3xl font-bold text-white mb-2">Clause Blocks View</h1>
+                  <p className="text-gray-400">Interactive Clause Analysis</p>
+                </div>
+                
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                  {clauses.map((clause) => (
+                    <div key={clause.id} 
+                         className={`p-4 rounded-lg border-2 transition-all hover:shadow-md cursor-pointer ${getClauseStatusColor(clause.status)}`}>
+                      <h3 className="text-lg font-semibold mb-2">{clause.title}</h3>
+                      <p className="text-sm opacity-80 line-clamp-3">{clause.content}</p>
+                      <div className="mt-3 flex justify-between items-center">
+                        <Badge variant={clause.status === 'high' ? 'destructive' : clause.status === 'medium' ? 'secondary' : 'outline'}>
+                          {clause.status} risk
+                        </Badge>
+                        <Button variant="ghost" size="sm" onClick={() => handleClauseEdit(clause.id)}>
+                          <Edit className="w-4 h-4" />
+                        </Button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          )}
         </div>
 
         {/* Right Sidebar - Clause Intelligence */}
@@ -294,118 +323,232 @@ const FullDocumentEditor = ({ showInlineHighlights, trackChanges, comparisonMode
             {/* Tab Navigation */}
             <div className="border-b border-border">
               <div className="flex">
-                <button className="flex-1 px-4 py-3 text-sm font-medium bg-primary text-primary-foreground">
+                <button 
+                  className={`flex-1 px-4 py-3 text-sm font-medium ${activeRightTab === 'chat' ? 'bg-primary text-primary-foreground' : 'text-muted-foreground hover:text-foreground hover:bg-muted/50'}`}
+                  onClick={() => setActiveRightTab('chat')}
+                >
                   AI Chat
                 </button>
-                <button className="flex-1 px-4 py-3 text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-muted/50">
+                <button 
+                  className={`flex-1 px-4 py-3 text-sm font-medium ${activeRightTab === 'compare' ? 'bg-primary text-primary-foreground' : 'text-muted-foreground hover:text-foreground hover:bg-muted/50'}`}
+                  onClick={() => setActiveRightTab('compare')}
+                >
                   Compare
                 </button>
-                <button className="flex-1 px-4 py-3 text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-muted/50">
+                <button 
+                  className={`flex-1 px-4 py-3 text-sm font-medium ${activeRightTab === 'memory' ? 'bg-primary text-primary-foreground' : 'text-muted-foreground hover:text-foreground hover:bg-muted/50'}`}
+                  onClick={() => setActiveRightTab('memory')}
+                >
                   Memory
                 </button>
               </div>
             </div>
 
-            {/* Chat Content */}
-            <div className="flex-1 p-4 overflow-y-auto space-y-4">
-              
-              <div className="flex items-start space-x-3">
-                <div className="w-8 h-8 bg-primary rounded-full flex items-center justify-center">
-                  <Bot className="w-4 h-4 text-primary-foreground" />
-                </div>
-                <div className="flex-1">
-                  <div className="bg-muted rounded-lg p-3 text-sm text-foreground">
-                    I've analyzed your contract and identified several key areas that need attention. The intellectual property clause in Section 4 poses significant risk.
+            {/* Tab Content */}
+            <div className="flex-1 overflow-y-auto custom-scrollbar">
+              {activeRightTab === 'chat' && (
+                <div className="p-4 space-y-4">
+                  <div className="flex items-start space-x-3">
+                    <div className="w-8 h-8 bg-primary rounded-full flex items-center justify-center">
+                      <Bot className="w-4 h-4 text-primary-foreground" />
+                    </div>
+                    <div className="flex-1">
+                      <div className="bg-muted rounded-lg p-3 text-sm text-foreground">
+                        I've analyzed your contract and identified several key areas that need attention. The intellectual property clause in Section 4 poses significant risk.
+                      </div>
+                    </div>
                   </div>
-                </div>
-              </div>
 
-              <div className="flex items-start space-x-3">
-                <div className="w-8 h-8 bg-primary rounded-full flex items-center justify-center">
-                  <Bot className="w-4 h-4 text-primary-foreground" />
-                </div>
-                <div className="flex-1">
-                  <div className="bg-muted rounded-lg p-3 text-sm text-foreground">
-                    <p className="mb-3">Here are the key risks I found:</p>
-                    <ul className="space-y-2 text-xs">
-                      <li className="flex items-center text-red-600 dark:text-red-400">
-                        <AlertTriangle className="w-3 h-3 mr-2" />
-                        Broad IP assignment without limitations
-                      </li>
-                      <li className="flex items-center text-yellow-600 dark:text-yellow-400">
-                        <AlertTriangle className="w-3 h-3 mr-2" />
-                        No penalty caps on late payments
-                      </li>
-                      <li className="flex items-center text-yellow-600 dark:text-yellow-400">
-                        <AlertTriangle className="w-3 h-3 mr-2" />
-                        Confidentiality terms lack specificity
-                      </li>
-                    </ul>
+                  <div className="flex items-start space-x-3">
+                    <div className="w-8 h-8 bg-primary rounded-full flex items-center justify-center">
+                      <Bot className="w-4 h-4 text-primary-foreground" />
+                    </div>
+                    <div className="flex-1">
+                      <div className="bg-muted rounded-lg p-3 text-sm text-foreground">
+                        <p className="mb-3">Here are the key risks I found:</p>
+                        <ul className="space-y-2 text-xs">
+                          <li className="flex items-center text-red-600 dark:text-red-400">
+                            <AlertTriangle className="w-3 h-3 mr-2" />
+                            Broad IP assignment without limitations
+                          </li>
+                          <li className="flex items-center text-yellow-600 dark:text-yellow-400">
+                            <AlertTriangle className="w-3 h-3 mr-2" />
+                            No penalty caps on late payments
+                          </li>
+                          <li className="flex items-center text-yellow-600 dark:text-yellow-400">
+                            <AlertTriangle className="w-3 h-3 mr-2" />
+                            Confidentiality terms lack specificity
+                          </li>
+                        </ul>
+                      </div>
+                    </div>
                   </div>
-                </div>
-              </div>
 
-              <div className="flex items-start space-x-3">
-                <div className="w-8 h-8 bg-primary rounded-full flex items-center justify-center">
-                  <Bot className="w-4 h-4 text-primary-foreground" />
-                </div>
-                <div className="flex-1">
-                  <div className="bg-muted rounded-lg p-3 text-sm text-foreground">
-                    <p className="mb-3">My recommendations:</p>
-                    <div className="space-y-2">
-                      <Button variant="outline" size="sm" className="w-full justify-start text-xs" onClick={() => console.log('Add IP limitations')}>
-                        <CheckCircle className="w-3 h-3 mr-2" />
-                        Add IP assignment limitations
-                      </Button>
-                      <Button variant="outline" size="sm" className="w-full justify-start text-xs" onClick={() => console.log('Cap penalties')}>
-                        <CheckCircle className="w-3 h-3 mr-2" />
-                        Cap late payment penalties
-                      </Button>
-                      <Button variant="outline" size="sm" className="w-full justify-start text-xs" onClick={() => console.log('Define confidential info')}>
-                        <CheckCircle className="w-3 h-3 mr-2" />
-                        Define confidential information
-                      </Button>
+                  <div className="flex items-start space-x-3">
+                    <div className="w-8 h-8 bg-primary rounded-full flex items-center justify-center">
+                      <Bot className="w-4 h-4 text-primary-foreground" />
+                    </div>
+                    <div className="flex-1">
+                      <div className="bg-muted rounded-lg p-3 text-sm text-foreground">
+                        <p className="mb-3">My recommendations:</p>
+                        <div className="space-y-2">
+                          <Button variant="outline" size="sm" className="w-full justify-start text-xs" onClick={() => console.log('Add IP limitations')}>
+                            <CheckCircle className="w-3 h-3 mr-2" />
+                            Add IP assignment limitations
+                          </Button>
+                          <Button variant="outline" size="sm" className="w-full justify-start text-xs" onClick={() => console.log('Cap penalties')}>
+                            <CheckCircle className="w-3 h-3 mr-2" />
+                            Cap late payment penalties
+                          </Button>
+                          <Button variant="outline" size="sm" className="w-full justify-start text-xs" onClick={() => console.log('Define confidential info')}>
+                            <CheckCircle className="w-3 h-3 mr-2" />
+                            Define confidential information
+                          </Button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="flex items-start space-x-3">
+                    <div className="w-8 h-8 bg-primary rounded-full flex items-center justify-center">
+                      <Bot className="w-4 h-4 text-primary-foreground" />
+                    </div>
+                    <div className="flex-1">
+                      <div className="bg-muted rounded-lg p-3 text-sm text-foreground">
+                        Would you like me to analyze any specific clause in more detail or suggest alternative language?
+                      </div>
+                      <div className="mt-2 space-x-2">
+                        <Button size="sm" className="text-xs" onClick={() => console.log('Analyze IP clause')}>
+                          Yes, analyze IP clause
+                        </Button>
+                        <Button variant="outline" size="sm" className="text-xs" onClick={() => console.log('Suggest alternatives')}>
+                          Suggest alternatives
+                        </Button>
+                      </div>
                     </div>
                   </div>
                 </div>
-              </div>
+              )}
 
-              <div className="flex items-start space-x-3">
-                <div className="w-8 h-8 bg-primary rounded-full flex items-center justify-center">
-                  <Bot className="w-4 h-4 text-primary-foreground" />
-                </div>
-                <div className="flex-1">
-                  <div className="bg-muted rounded-lg p-3 text-sm text-foreground">
-                    Would you like me to analyze any specific clause in more detail or suggest alternative language?
+              {activeRightTab === 'compare' && (
+                <div className="p-4 space-y-4">
+                  <h4 className="font-medium text-sm">Smart Clause Comparison</h4>
+                  
+                  <div className="space-y-3">
+                    <div className="bg-card border border-border rounded-lg p-3">
+                      <div className="flex items-center justify-between mb-2">
+                        <span className="text-xs font-medium text-foreground">Current Clause</span>
+                        <Badge variant="destructive" className="text-xs">High Risk</Badge>
+                      </div>
+                      <p className="text-xs text-muted-foreground">
+                        All work product shall remain the exclusive property of Contractor...
+                      </p>
+                    </div>
+                    
+                    <div className="bg-card border border-border rounded-lg p-3">
+                      <div className="flex items-center justify-between mb-2">
+                        <span className="text-xs font-medium text-foreground">Firm Template</span>
+                        <Badge variant="outline" className="text-xs">Safe</Badge>
+                      </div>
+                      <p className="text-xs text-muted-foreground">
+                        All work product shall be the exclusive property of Company...
+                      </p>
+                    </div>
+                    
+                    <div className="bg-card border border-border rounded-lg p-3">
+                      <div className="flex items-center justify-between mb-2">
+                        <span className="text-xs font-medium text-foreground">Industry Standard</span>
+                        <Badge variant="secondary" className="text-xs">Standard</Badge>
+                      </div>
+                      <p className="text-xs text-muted-foreground">
+                        Joint ownership of work product with transfer rights...
+                      </p>
+                    </div>
                   </div>
-                  <div className="mt-2 space-x-2">
-                    <Button size="sm" className="text-xs" onClick={() => console.log('Analyze IP clause')}>
-                      Yes, analyze IP clause
-                    </Button>
-                    <Button variant="outline" size="sm" className="text-xs" onClick={() => console.log('Suggest alternatives')}>
-                      Suggest alternatives
-                    </Button>
+                  
+                  <div className="bg-muted/50 rounded-lg p-3">
+                    <h5 className="text-xs font-medium mb-2">AI Feedback Score</h5>
+                    <div className="space-y-2">
+                      <div className="flex justify-between text-xs">
+                        <span>Clarity</span>
+                        <span className="text-yellow-500">6/10</span>
+                      </div>
+                      <div className="flex justify-between text-xs">
+                        <span>Deviation</span>
+                        <span className="text-destructive">High</span>
+                      </div>
+                      <div className="flex justify-between text-xs">
+                        <span>Risk Level</span>
+                        <span className="text-destructive">Critical</span>
+                      </div>
+                    </div>
                   </div>
                 </div>
-              </div>
+              )}
+
+              {activeRightTab === 'memory' && (
+                <div className="p-4 space-y-4">
+                  <h4 className="font-medium text-sm">Suggestion Reasoning & Memory</h4>
+                  
+                  <div className="space-y-3">
+                    <div className="bg-card border border-border rounded-lg p-3">
+                      <div className="flex items-center space-x-2 mb-2">
+                        <MessageSquare className="w-4 h-4 text-primary" />
+                        <span className="text-xs font-medium">Why this suggestion?</span>
+                      </div>
+                      <p className="text-xs text-muted-foreground mb-2">
+                        Based on analysis of 1,247 similar tech contracts, 89% retain IP rights with the hiring company.
+                      </p>
+                      <div className="flex items-center space-x-2">
+                        <Button size="sm" variant="outline" className="text-xs">
+                          Approve & Log
+                        </Button>
+                        <Button size="sm" variant="ghost" className="text-xs">
+                          Update Memory
+                        </Button>
+                      </div>
+                    </div>
+                    
+                    <div className="bg-card border border-border rounded-lg p-3">
+                      <span className="text-xs font-medium">Previous Edits</span>
+                      <div className="mt-2 space-y-1">
+                        <div className="text-xs text-muted-foreground">• March 2024: Similar clause modified in TechCorp deal</div>
+                        <div className="text-xs text-muted-foreground">• Feb 2024: IP transfer negotiated successfully</div>
+                        <div className="text-xs text-muted-foreground">• Jan 2024: Added jurisdiction clause</div>
+                      </div>
+                    </div>
+                    
+                    <div className="bg-muted/50 rounded-lg p-3">
+                      <span className="text-xs font-medium">Memory Database</span>
+                      <div className="mt-2 space-y-1">
+                        <div className="text-xs text-muted-foreground">• 1,247 analyzed contracts</div>
+                        <div className="text-xs text-muted-foreground">• 89% IP retention rate</div>
+                        <div className="text-xs text-muted-foreground">• 15 successful negotiations</div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              )}
             </div>
 
-            {/* Chat Input */}
-            <div className="border-t border-border p-4">
-              <div className="flex items-center space-x-2">
-                <input 
-                  type="text" 
-                  placeholder="Ask about this contract..."
-                  value={chatInput}
-                  onChange={(e) => setChatInput(e.target.value)}
-                  onKeyPress={(e) => e.key === 'Enter' && handleChatSubmit()}
-                  className="flex-1 px-3 py-2 text-sm border border-border rounded-md bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
-                />
-                <Button size="sm" onClick={handleChatSubmit}>
-                  <Send className="w-4 h-4" />
-                </Button>
+            {/* Chat Input - only show for chat tab */}
+            {activeRightTab === 'chat' && (
+              <div className="border-t border-border p-4">
+                <div className="flex items-center space-x-2">
+                  <input 
+                    type="text" 
+                    placeholder="Ask about this contract..."
+                    value={chatInput}
+                    onChange={(e) => setChatInput(e.target.value)}
+                    onKeyPress={(e) => e.key === 'Enter' && handleChatSubmit()}
+                    className="flex-1 px-3 py-2 text-sm border border-border rounded-md bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
+                  />
+                  <Button size="sm" onClick={handleChatSubmit}>
+                    <Send className="w-4 h-4" />
+                  </Button>
+                </div>
               </div>
-            </div>
+            )}
           </div>
         )}
       </div>
@@ -548,11 +691,10 @@ const FullDocumentEditor = ({ showInlineHighlights, trackChanges, comparisonMode
                     Export as HTML
                   </DropdownMenuItem>
                 </DropdownMenuContent>
-                </DropdownMenu>
+              </DropdownMenu>
             </div>
           </div>
-        </div>
-      </footer>
+        </footer>
     </div>
   );
 };
