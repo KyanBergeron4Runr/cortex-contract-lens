@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { MessageSquare, Bot, Send, AlertTriangle, CheckCircle, Eye, EyeOff, Edit, BookOpen, Plus, BarChart3, Users, Calendar, FileText, Settings, Highlighter, GitBranch, Download, List, TreePine, FolderOpen, Clock, Tag, PenTool, Archive, ChevronUp } from 'lucide-react';
 import { Button } from './ui/button';
@@ -89,6 +90,22 @@ const FullDocumentEditor = ({ showInlineHighlights, trackChanges, comparisonMode
     console.log('Saving project...');
   };
 
+  const handleAskAI = () => {
+    console.log('Ask AI clicked');
+  };
+
+  const handleFormatClick = () => {
+    console.log('Format clicked');
+  };
+
+  const handleSaveDraft = () => {
+    console.log('Save draft clicked');
+  };
+
+  const handleFinalizeDocument = () => {
+    console.log('Finalize document clicked');
+  };
+
   return (
     <div className="h-full flex flex-col bg-background text-foreground">
       {/* Header */}
@@ -143,15 +160,15 @@ const FullDocumentEditor = ({ showInlineHighlights, trackChanges, comparisonMode
           </div>
           
           <div className="flex items-center space-x-2">
-            <Button variant="outline" size="sm" onClick={() => console.log('Format clicked')}>
+            <Button variant="outline" size="sm" onClick={handleFormatClick}>
               <Edit className="w-4 h-4 mr-1" />
               Format
             </Button>
-            <Button variant="outline" size="sm" onClick={() => console.log('Save draft clicked')}>
+            <Button variant="outline" size="sm" onClick={handleSaveDraft}>
               <FileText className="w-4 h-4 mr-1" />
               Save Draft
             </Button>
-            <Button size="sm" className="bg-gradient-to-r from-primary to-primary/80" onClick={() => console.log('Finalize document clicked')}>
+            <Button size="sm" className="bg-gradient-to-r from-primary to-primary/80" onClick={handleFinalizeDocument}>
               <CheckCircle className="w-4 h-4 mr-1" />
               Finalize Document
             </Button>
@@ -195,7 +212,7 @@ const FullDocumentEditor = ({ showInlineHighlights, trackChanges, comparisonMode
                 </div>
 
                 {/* Ask AI Button */}
-                <Button className="w-full mb-6 bg-gradient-to-r from-primary to-primary/80" onClick={() => console.log('Ask AI clicked')}>
+                <Button className="w-full mb-6 bg-gradient-to-r from-primary to-primary/80" onClick={handleAskAI}>
                   <Bot className="w-4 h-4 mr-2" />
                   Ask AI about this section
                 </Button>
@@ -221,8 +238,8 @@ const FullDocumentEditor = ({ showInlineHighlights, trackChanges, comparisonMode
         )}
 
         {/* Main Document Area */}
-        <div className="flex-1 overflow-y-auto bg-[#0e1015]">
-          <div className="p-8 max-w-4xl mx-auto">
+        <div className="flex-1 overflow-y-auto bg-[#0e1015] flex justify-center">
+          <div className="w-full max-w-5xl p-8">
             <div className="bg-[#1a1d29] shadow-lg rounded-lg p-8 space-y-8 border border-gray-800">
               <div className="text-center mb-8">
                 <h1 className="text-3xl font-bold text-white mb-2">Service Agreement</h1>
