@@ -23,7 +23,7 @@ const VideoSection = () => {
             <div className="relative aspect-video">
               <iframe
                 className="w-full h-full rounded-xl"
-                src="https://www.youtube.com/embed/dQw4w9WgXcQ"
+                src="https://www.youtube.com/embed/PAYwOES6AjU"
                 title="4Runr Cortex Demo Video"
                 frameBorder="0"
                 allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
